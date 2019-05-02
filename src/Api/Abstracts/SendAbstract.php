@@ -7,9 +7,9 @@
 
 namespace Salibhdr\TyphoonTelegram\Api\Abstracts;
 
-use Salibhdr\TyphoonTelegram\Api\Finals\ApiRequest;
 use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface;
 use Salibhdr\TyphoonTelegram\Exceptions\TelegramParamsRequiredException;
+use Salibhdr\TyphoonTelegram\Facades\TyTelegram;
 
 abstract class SendAbstract implements BaseSendMessageInterface
 {
@@ -53,10 +53,11 @@ abstract class SendAbstract implements BaseSendMessageInterface
         return $this->paramsIsSetManually;
     }
 
-    /**    * @param array $requiredParams
+    /**
+     * @param array $requiredParams
      * @throws TelegramParamsRequiredException
      */
-    protected function validate(array $requiredParams)
+    protected function validateRequired(array $requiredParams)
     {
         $paramsWithError = [];
 
@@ -69,7 +70,10 @@ abstract class SendAbstract implements BaseSendMessageInterface
             throw new TelegramParamsRequiredException($paramsWithError);
     }
 
-    /**    * @return array
+    protected function extraValidation() {}
+
+    /**
+     * @return array
      * @throws \Salibhdr\TyphoonTelegram\Exceptions\TelegramParamsRequiredException
      */
     public function getParams(): array
@@ -80,7 +84,9 @@ abstract class SendAbstract implements BaseSendMessageInterface
             $this->addOptionalParams();
         }
 
-        $this->validate($this->requiredParams());
+        $this->validateRequired($this->requiredParams());
+
+        $this->extraValidation();
 
         return $this->params;
     }
@@ -111,5 +117,10 @@ abstract class SendAbstract implements BaseSendMessageInterface
     public static function __callStatic($method, $parameters)
     {
         return (new static)->$method(...$parameters);
+    }
+
+    public function send()
+    {
+        return TyTelegram::send($this);
     }
 }
