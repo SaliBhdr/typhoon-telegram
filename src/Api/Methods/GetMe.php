@@ -7,10 +7,17 @@
 
 namespace Salibhdr\TyphoonTelegram\Api\Methods;
 
+use Salibhdr\TyphoonTelegram\Facades\TyTelegram;
+
 class GetMe
 {
-    public function sendMethod() : string
+    public function method() : string
     {
         return 'getMe';
+    }
+
+    public function send()
+    {
+        return TyTelegram::getMe();
     }
 }

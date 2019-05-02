@@ -15,22 +15,22 @@ use Salibhdr\TyphoonTelegram\Exceptions\RequestMethodInvalidException;
 
 class SendDynamic extends SendAbstract implements BaseSendMessageInterface
 {
-    protected $sendMethod;
+    protected $method;
 
     protected $requestMethod;
 
     /**
      * Send constructor.
      * @param $requestMethod
-     * @param $sendMethod
+     * @param $method
      * @throws RequestMethodInvalidException
      */
-    public function __construct($requestMethod, $sendMethod)
+    public function __construct($requestMethod, $method)
     {
-        if (!isset($sendMethod) && !in_array($sendMethod, [ApiRequest::GET, ApiRequest::POST, ApiRequest::MULTIPART]))
+        if (!isset($method) && !in_array($method, [ApiRequest::GET, ApiRequest::POST, ApiRequest::MULTIPART]))
             throw new RequestMethodInvalidException();
 
-        $this->sendMethod = $sendMethod;
+        $this->method = $method;
 
         $this->requestMethod = $requestMethod;
     }
@@ -47,9 +47,9 @@ class SendDynamic extends SendAbstract implements BaseSendMessageInterface
 
     protected function addOptionalParams(): void {}
 
-    public function sendMethod(): string
+    public function method(): string
     {
-        return $this->sendMethod;
+        return $this->method;
     }
 
     protected function requiredParams(): array

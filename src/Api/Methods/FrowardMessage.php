@@ -68,7 +68,7 @@ class FrowardMessage extends SendAbstract implements ForwardMessageInterface
     }
 
 
-    public function sendMethod() : string
+    public function method() : string
     {
         return 'forwardMessage';
     }

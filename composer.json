@@ -4,7 +4,7 @@
     "keywords": ["telegram", "telegram bot", "telegram bot api", "telegram sdk", "telegram php", "laravel telegram", "laravel"],
     "type": "library",
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=7.0.0",
         "guzzlehttp/guzzle": "~6.0",
         "illuminate/support": "~5.0",
         "irazasyed/telegram-bot-sdk": "^2.0"

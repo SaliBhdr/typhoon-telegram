@@ -2,9 +2,10 @@
 
 namespace Salibhdr\TyphoonTelegram;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface;
+use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
 use Salibhdr\TyphoonTelegram\Api\Methods\GetMe;
 use Salibhdr\TyphoonTelegram\Api\Methods\SendDynamic;
+use Salibhdr\TyphoonTelegram\Exceptions\InvalidChanActionException;
 use Salibhdr\TyphoonTelegram\HttpClients\GuzzleHttpClient;
 use Salibhdr\TyphoonTelegram\Objects\Dynamic;
 use Telegram\Bot\Api as BaseApi;
@@ -14,6 +15,23 @@ use Telegram\Bot\Api as BaseApi;
 class Api extends BaseApi
 {
     const VERSION = '1.0.0';
+
+    protected $chatActions = [
+        'typing',
+        'upload_photo',
+        'record_video',
+        'upload_video',
+        'record_audio',
+        'upload_audio',
+        'upload_document',
+        'find_location',
+        'record_video_note',
+        'upload_video_note '
+    ];
+
+    public function setChatActions(array $chatActions){
+        $this->chatActions = $chatActions;
+    }
 
     /**    * Instantiates a new Telegram super-class object.
      *
@@ -35,21 +53,21 @@ class Api extends BaseApi
     }
 
     /**
-     * @param BaseSendMessageInterface $apiObj
+     * @param $apiMethodObj
      * @return mixed
      * @throws Exceptions\TelegramParamsRequiredException
      */
-    public function send(BaseSendMessageInterface $apiObj)
+    public function send($apiMethodObj)
     {
-        if($apiObj instanceof SendDynamic){
-            return new Dynamic($this->{$apiObj->getRequestMethod()}($apiObj->sendMethod(), $apiObj->getParams()));
+        if($apiMethodObj instanceof SendDynamic){
+            return new Dynamic($this->{$apiMethodObj->getRequestMethod()}($apiMethodObj->method(), $apiMethodObj->getParams()));
         }
 
-        if($apiObj instanceof GetMe){
-            return $this->{$apiObj->sendMethod()};
+        if($apiMethodObj instanceof GetMe){
+            return $this->{$apiMethodObj->method()};
         }
 
-        return $this->{$apiObj->sendMethod()}($apiObj->getParams());
+        return $this->{$apiMethodObj->method()}($apiMethodObj->getParams());
     }
 
     /**
@@ -77,5 +95,33 @@ class Api extends BaseApi
         return $keyboard;
     }
 
+    /**
+     * Broadcast a Chat Action.
+     *
+     * <code>
+     * $params = [
+     *   'chat_id' => '',
+     *   'action'  => '',
+     * ];
+     * </code>
+     *
+     * @link https://core.telegram.org/bots/api#sendchataction
+     *
+     * @param array $params
+     *
+     * @var int|string $params ['chat_id']
+     * @var string $params ['action']
+     *
+     * @return \Telegram\Bot\TelegramResponse
+     * @throws InvalidChanActionException
+     */
+    public function sendChatAction(array $params)
+    {
+        if (isset($params['action']) && in_array($params['action'], $this->chatActions)) {
+            return $this->post('sendChatAction', $params);
+        }
+
+        throw new InvalidChanActionException($this->chatActions);
+    }
 
 }

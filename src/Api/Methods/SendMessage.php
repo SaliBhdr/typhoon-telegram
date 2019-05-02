@@ -84,7 +84,7 @@ class SendMessage extends SendAbstract implements SendMessageInterface
 
     }
 
-    public function sendMethod(): string
+    public function method(): string
     {
         return 'sendMessage';
     }

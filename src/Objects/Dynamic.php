@@ -2,8 +2,6 @@
 
 namespace Salibhdr\TyphoonTelegram\Objects;
 
-use Telegram\Bot\Objects\BaseObject;
-
 /**
  * Class Chat.
  *
