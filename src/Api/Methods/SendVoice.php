@@ -63,7 +63,7 @@ class SendVoice extends SendAbstract implements SendVoiceInterface
 
     }
 
-    public function sendMethod(): string
+    public function method(): string
     {
         return 'sendVoice';
     }

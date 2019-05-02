@@ -11,7 +11,7 @@ use Salibhdr\TyphoonTelegram\Facades\TyTelegram;
 
 class GetMe
 {
-    public function sendMethod() : string
+    public function method() : string
     {
         return 'getMe';
     }

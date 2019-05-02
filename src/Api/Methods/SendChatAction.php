@@ -25,7 +25,7 @@ class SendChatAction extends SendAbstract implements SendChatActionInterface
 
     protected function addOptionalParams(): void {}
 
-    public function sendMethod(): string
+    public function method(): string
     {
         return 'sendChatAction';
     }

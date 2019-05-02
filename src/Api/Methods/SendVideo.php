@@ -34,7 +34,7 @@ class SendVideo extends SendAbstract implements SendVideoInterface
 
     protected $supportStreaming;
 
-    public function sendMethod(): string
+    public function method(): string
     {
         return 'sendVideo';
     }

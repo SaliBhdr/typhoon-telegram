@@ -2,7 +2,7 @@
 
 namespace Salibhdr\TyphoonTelegram;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface;
+use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
 use Salibhdr\TyphoonTelegram\Api\Methods\GetMe;
 use Salibhdr\TyphoonTelegram\Api\Methods\SendDynamic;
 use Salibhdr\TyphoonTelegram\Exceptions\InvalidChanActionException;
@@ -53,21 +53,21 @@ class Api extends BaseApi
     }
 
     /**
-     * @param BaseSendMessageInterface $apiObj
+     * @param $apiMethodObj
      * @return mixed
      * @throws Exceptions\TelegramParamsRequiredException
      */
-    public function send(BaseSendMessageInterface $apiObj)
+    public function send($apiMethodObj)
     {
-        if($apiObj instanceof SendDynamic){
-            return new Dynamic($this->{$apiObj->getRequestMethod()}($apiObj->sendMethod(), $apiObj->getParams()));
+        if($apiMethodObj instanceof SendDynamic){
+            return new Dynamic($this->{$apiMethodObj->getRequestMethod()}($apiMethodObj->method(), $apiMethodObj->getParams()));
         }
 
-        if($apiObj instanceof GetMe){
-            return $this->{$apiObj->sendMethod()};
+        if($apiMethodObj instanceof GetMe){
+            return $this->{$apiMethodObj->method()};
         }
 
-        return $this->{$apiObj->sendMethod()}($apiObj->getParams());
+        return $this->{$apiMethodObj->method()}($apiMethodObj->getParams());
     }
 
     /**
