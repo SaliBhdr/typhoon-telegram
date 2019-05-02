@@ -8,16 +8,10 @@
 namespace Salibhdr\TyphoonTelegram\Api\Interfaces;
 
 
-interface BaseSendMessageInterface
+interface BaseSendMessageInterface extends BaseInterface
 {
     public function chatId($chat_id);
 
     public function getChatId();
-
-    public function setParams(array $params = []);
-
-    public function getParams() : array;
-
-    public function sendMethod(): string;
 
 }

@@ -61,7 +61,7 @@ class SendDocument extends SendAbstract implements SendDocumentInterface
         }
     }
 
-    public function sendMethod(): string
+    public function method(): string
     {
        return 'sendDocument';
     }
