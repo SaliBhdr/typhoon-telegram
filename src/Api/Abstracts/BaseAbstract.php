@@ -9,7 +9,7 @@ namespace Salibhdr\TyphoonTelegram\Api\Abstracts;
 
 use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
 use Salibhdr\TyphoonTelegram\Exceptions\TelegramParamsRequiredException;
-use Salibhdr\TyphoonTelegram\Facades\TyTelegram;
+use Salibhdr\TyphoonTelegram\Facades\Telegram;
 
 abstract class BaseAbstract implements BaseInterface
 {
@@ -109,6 +109,6 @@ abstract class BaseAbstract implements BaseInterface
 
     public function send()
     {
-        return TyTelegram::send($this);
+        return Telegram::send($this);
     }
 }

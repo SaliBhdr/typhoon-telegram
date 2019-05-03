@@ -11,7 +11,7 @@ use Salibhdr\TyphoonTelegram\Commands\WebHookCommand;
 
 /*** Class TelegramServiceProvider.
  */
-class TyTelegramServiceProvider extends ServiceProvider
+class TelegramServiceProvider extends ServiceProvider
 {
     /**    * Indicates if loading of the provider is deferred.
      *

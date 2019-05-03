@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\Facade;
  * 
  * @see \Salibhdr\TyphoonTelegram\Api
  */
-class TyTelegram extends Facade
+class Telegram extends Facade
 {
     /**    * Get the registered name of the component.
      *

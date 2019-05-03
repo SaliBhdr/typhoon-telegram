@@ -9,7 +9,7 @@ namespace Salibhdr\TyphoonTelegram\Commands;
 
 
 use Illuminate\Console\Command;
-use Salibhdr\TyphoonTelegram\Facades\TyTelegram;
+use Salibhdr\TyphoonTelegram\Facades\Telegram;
 
 class WebHookCommand extends Command
 {
@@ -58,7 +58,7 @@ class WebHookCommand extends Command
 
                 $baseUrl = $setting['baseUrl'] ?? url();
 
-                $webHookResponse = TyTelegram::setWebhook(['url' => "{$baseUrl}/{$setting['botToken']}/webhook"], false);
+                $webHookResponse = Telegram::setWebhook(['url' => "{$baseUrl}/{$setting['botToken']}/webhook"], false);
 
                 $this->line("");
 

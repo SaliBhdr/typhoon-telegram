@@ -7,7 +7,7 @@
 
 namespace Salibhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Facades\TyTelegram;
+use Salibhdr\TyphoonTelegram\Facades\Telegram;
 
 class GetMe
 {
@@ -18,6 +18,6 @@ class GetMe
 
     public function send()
     {
-        return TyTelegram::getMe();
+        return Telegram::getMe();
     }
 }
