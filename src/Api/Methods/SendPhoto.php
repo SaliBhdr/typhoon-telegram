@@ -56,7 +56,7 @@ class SendPhoto extends SendAbstract implements SendPhotoInterface
         }
     }
 
-    public function sendMethod(): string
+    public function method(): string
     {
         return 'sendPhoto';
     }

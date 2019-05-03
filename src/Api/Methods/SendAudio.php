@@ -80,7 +80,7 @@ class SendAudio extends SendAbstract implements SendAudioInterface
 
     }
 
-    public function sendMethod(): string
+    public function method(): string
     {
         return 'sendAudio';
     }

@@ -31,7 +31,7 @@ class SendLocation extends SendAbstract implements SendLocationInterface
 
     protected const maxLivePeriod = 86400;
 
-    public function sendMethod(): string
+    public function method(): string
     {
         return 'sendLocation';
     }
@@ -120,7 +120,7 @@ class SendLocation extends SendAbstract implements SendLocationInterface
      */
     protected function extraValidation()
     {
-        if (!is_null($this->livePeriod) && ($this->livePeriod >= static::minLivePeriod && $this->livePeriod <= static::minLivePeriod))
+        if (!is_null($this->livePeriod) && !($this->livePeriod >= static::minLivePeriod && $this->livePeriod <= static::minLivePeriod))
             throw new LivePeriodException(static::minLivePeriod, static::minLivePeriod);
     }
 }

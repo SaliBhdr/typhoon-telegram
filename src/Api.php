@@ -2,7 +2,7 @@
 
 namespace Salibhdr\TyphoonTelegram;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface;
+use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
 use Salibhdr\TyphoonTelegram\Api\Methods\GetMe;
 use Salibhdr\TyphoonTelegram\Api\Methods\SendDynamic;
 use Salibhdr\TyphoonTelegram\Exceptions\InvalidChatActionException;
@@ -69,11 +69,12 @@ class Api extends BaseApi
     }
 
     /**
-     * @param BaseSendMessageInterface $apiObj
+     * @param $apiMethodObj
      * @return mixed
      * @throws Exceptions\TelegramParamsRequiredException
      */
-    public function send(BaseSendMessageInterface $apiMethodObj)
+
+    public function send(BaseInterface $apiMethodObj)
     {
 
         if ($apiMethodObj instanceof SendDynamic) {
@@ -86,6 +87,7 @@ class Api extends BaseApi
         }
 
         return $this->{$apiMethodObj->sendMethod()}($apiMethodObj->getParams());
+
     }
 
     /**
