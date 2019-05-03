@@ -37,46 +37,46 @@ class WebHookCommand extends Command
     {
         $this->line("");
 
-        $webhooks = config('telegram.webhooks');
+        $bots = config('telegram.bots');
 
-        if (is_null($webhooks) || !is_array($webhooks) || empty($webhooks)) {
-            $this->error("No webhook is specified");
+        if (is_null($bots) || !is_array($bots) || empty($bots)) {
+            $this->error("No bot is defined in config file");
 
             return;
         }
 
         $this->line("<info>Setting webhooks:</info>");
 
-        $count = 1;
+        $row = 1;
         $activeCount = 0;
         $deactiveCount = 0;
 
-        foreach ($webhooks as $botName => $webhook) {
+        foreach ($bots as $botName => $setting) {
 
-            if($webhook['is_active']){
+            if($setting['is_active']){
                 $activeCount++;
 
-                $baseUrl = $webhook['baseUrl'] ?? url();
+                $baseUrl = $setting['baseUrl'] ?? url();
 
-                $webHookResponse = TyTelegram::setWebhook(['url' => "{$baseUrl}/{$webhook['botToken']}/webhook"], false);
+                $webHookResponse = TyTelegram::setWebhook(['url' => "{$baseUrl}/{$setting['botToken']}/webhook"], false);
 
                 $this->line("");
 
                 $webHookResponse = $webHookResponse->getRawResponse();
 
                 if (isset($webHookResponse[0]) && $webHookResponse[0] === true)
-                    $this->line(" $count) `{$botName}` webhook response: <info>Webhook set</info>");
+                    $this->line(" $row) `{$botName}` webhook response: <info>Webhook set</info>");
                 else
-                    $this->line(" $count) `{$botName}` webhook response: <error>Webhook Not Set</error>");
+                    $this->line(" $row) `{$botName}` webhook response: <error>Webhook Not Set</error>");
 
             }else{
                 $deactiveCount++;
 
-                $this->warn(" $count) `{$botName}` is deactive");
+                $this->warn(" $row) `{$botName}` is deactive");
             }
 
             $this->line("");
-            $count++;
+            $row++;
         }
         $this->line(" <info>{$activeCount} active</info> and <error>{$deactiveCount} deactive</error> webhooks");
     }

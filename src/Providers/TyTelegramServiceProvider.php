@@ -73,7 +73,7 @@ class TyTelegramServiceProvider extends ServiceProvider
             $config = $app['config'];
 
             $telegram = new Api(
-                $config->get('telegram.bot_token', false),
+                $config->get('telegram.default_bot_token', false),
                 $config->get('telegram.async_requests', false),
                 $config->get('telegram.http_client_handler', null)
             );

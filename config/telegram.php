@@ -14,7 +14,7 @@ return [
     | https://core.telegram.org/bots#botfather
     |
     */
-    'bot_token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
+    'default_bot_token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -74,13 +74,13 @@ return [
     ],
 
 
-    'webhooks' => [
-       'mainBot' => [
-           'is_active' => true,
-           'baseUrl' => 'https://5df7d54d.ngrok.io',
-           'botToken' => '554656542:AAGTEmWvM3oMaZq5ejsBf7Ag8i7oKNgdv2Q',
-           'controller' => 'Telegram\V1\MainBotController@handleRequests'
-       ],
+    'bots' => [
+        'mainBot' => [
+            'is_active' => true,
+            'baseUrl' => 'https://5df7d54d.ngrok.io',
+            'botToken' => '554656542:AAGTEmWvM3oMaZq5ejsBf7Ag8i7oKNgdv2Q',
+            'controller' => 'Telegram\V1\MainBotController@handleRequests'
+        ],
         'poster-bot-1' => [
             'is_active' => false,
             'baseUrl' => 'https://a2db17a0.ngrok.io',

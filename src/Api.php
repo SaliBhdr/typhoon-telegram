@@ -5,7 +5,7 @@ namespace Salibhdr\TyphoonTelegram;
 use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
 use Salibhdr\TyphoonTelegram\Api\Methods\GetMe;
 use Salibhdr\TyphoonTelegram\Api\Methods\SendDynamic;
-use Salibhdr\TyphoonTelegram\Exceptions\InvalidChanActionException;
+use Salibhdr\TyphoonTelegram\Exceptions\InvalidChatActionException;
 use Salibhdr\TyphoonTelegram\HttpClients\GuzzleHttpClient;
 use Salibhdr\TyphoonTelegram\Objects\Dynamic;
 use Telegram\Bot\Api as BaseApi;
@@ -29,7 +29,8 @@ class Api extends BaseApi
         'upload_video_note '
     ];
 
-    public function setChatActions(array $chatActions){
+    public function setChatActions(array $chatActions)
+    {
         $this->chatActions = $chatActions;
     }
 
@@ -45,11 +46,26 @@ class Api extends BaseApi
      */
     public function __construct(?string $token = null, bool $async = false, $http_client_handler = null)
     {
-        if(!isset($http_client_handler)){
+        if (!isset($http_client_handler)) {
             $http_client_handler = new GuzzleHttpClient();
         }
 
         parent::__construct($token, $async, $http_client_handler);
+    }
+
+    /**    * Handle dynamic static method calls into the method.
+     *
+     * @param  string $method
+     * @param  array $parameters
+     * @return mixed
+     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
+     */
+    public static function __callStatic($method, $parameters)
+    {
+        if ($method === 'bot')
+            return (new static)->$method(...$parameters);
+
+        return static::$method(...$parameters);
     }
 
     /**
@@ -57,17 +73,21 @@ class Api extends BaseApi
      * @return mixed
      * @throws Exceptions\TelegramParamsRequiredException
      */
-    public function send($apiMethodObj)
+
+    public function send(BaseInterface $apiMethodObj)
     {
-        if($apiMethodObj instanceof SendDynamic){
+
+        if ($apiMethodObj instanceof SendDynamic) {
             return new Dynamic($this->{$apiMethodObj->getRequestMethod()}($apiMethodObj->method(), $apiMethodObj->getParams()));
         }
 
-        if($apiMethodObj instanceof GetMe){
+        if ($apiMethodObj instanceof GetMe) {
             return $this->{$apiMethodObj->method()};
+
         }
 
-        return $this->{$apiMethodObj->method()}($apiMethodObj->getParams());
+        return $this->{$apiMethodObj->sendMethod()}($apiMethodObj->getParams());
+
     }
 
     /**
@@ -78,7 +98,7 @@ class Api extends BaseApi
     public function getDefaultHeaders()
     {
         return [
-            'User-Agent' => 'Telegram Bot PHP SDK v'.Api::VERSION.' - (https://github.com/salibhdr/typhoon-telegram-bot)',
+            'User-Agent' => 'Telegram Bot PHP SDK v' . Api::VERSION . ' - (https://github.com/salibhdr/typhoon-telegram-bot)',
         ];
     }
 
@@ -88,7 +108,7 @@ class Api extends BaseApi
      */
     public function inlineKeyboardMarkup(array $keyboard)
     {
-        if(!array_key_exists('inline_keyboard',$keyboard)){
+        if (!array_key_exists('inline_keyboard', $keyboard)) {
             return ['inline_keyboard' => $keyboard];
         }
 
@@ -113,7 +133,7 @@ class Api extends BaseApi
      * @var string $params ['action']
      *
      * @return \Telegram\Bot\TelegramResponse
-     * @throws InvalidChanActionException
+     * @throws InvalidChatActionException
      */
     public function sendChatAction(array $params)
     {
@@ -121,7 +141,206 @@ class Api extends BaseApi
             return $this->post('sendChatAction', $params);
         }
 
-        throw new InvalidChanActionException($this->chatActions);
+        throw new InvalidChatActionException($this->chatActions);
     }
 
+    public function bot(string $botName)
+    {
+        $bot = config('telegram.bots.' . $botName);
+
+        if (!is_null($bot)
+            && is_array($bot)
+            && empty($bot)
+            && isset($bot['botToken'])
+            && isset($bot['is_active'])
+            && $bot['is_active'])
+            $this->setAccessToken($bot['botToken']);
+
+        return $this;
+    }
+
+    /**
+     * Magic method to process any "get" requests.
+     *
+     * @param $method
+     * @param $arguments
+     *
+     * @return bool|TelegramResponse
+     */
+    public function __call($method, $arguments)
+    {
+        $action = substr($method, 0, 3);
+        if ($action === 'get') {
+            /* @noinspection PhpUndefinedFunctionInspection */
+            $class_name = studly_case(substr($method, 3));
+            $class = 'Telegram\Bot\Objects\\'.$class_name;
+            $response = $this->post($method, $arguments[0] ?: []);
+
+            if (!class_exists($class)) {
+                $class = 'Salibhdr\TyphoonTelegram\Objects\\'.$class_name;
+            }
+
+            if(class_exists($class)){
+                return new $class($response->getDecodedBody());
+            }
+
+            return $response;
+        }
+
+        return false;
+    }
+
+    /**
+     * Send general files.
+     *
+     * <code>
+     * $params = [
+     *   'chat_id'             => '',
+     *   'document'            => '',
+     *   'reply_to_message_id' => '',
+     *   'reply_markup'        => '',
+     * ];
+     * </code>
+     *
+     * @link https://core.telegram.org/bots/api#senddocument
+     *
+     * @param array    $params
+     *
+     * @var int|string $params ['chat_id']
+     * @var string     $params ['document']
+     * @var int        $params ['reply_to_message_id']
+     * @var string     $params ['reply_markup']
+     *
+     * @return Message
+     */
+    public function sendAnimation(array $params)
+    {
+        return $this->uploadFile('sendAnimation', $params);
+    }
+
+    public function sendVideoNote(array $params)
+    {
+        return $this->uploadFile('sendVideoNote', $params);
+    }
+
+    public function sendMediaGroup(array $params)
+    {
+        return $this->uploadFile('sendMediaGroup', $params);
+    }
+
+    public function editMessageLiveLocation(array $params)
+    {
+        return $this->post('editMessageLiveLocation', $params);
+    }
+
+    public function stopMessageLiveLocation(array $params)
+    {
+        return $this->post('stopMessageLiveLocation', $params);
+    }
+
+    public function sendVenue(array $params)
+    {
+        return $this->post('sendVenue', $params);
+    }
+
+    public function sendContact(array $params)
+    {
+        return $this->post('sendContact', $params);
+    }
+
+    public function sendPoll(array $params)
+    {
+        return $this->post('sendPoll', $params);
+    }
+
+    public function kickChatMember(array $params)
+    {
+        return $this->post('kickChatMember', $params);
+    }
+
+    public function unbanChatMember(array $params)
+    {
+        return $this->post('unbanChatMember', $params);
+    }
+
+    public function restrictChatMember(array $params)
+    {
+        return $this->post('restrictChatMember', $params);
+    }
+
+    public function promoteChatMember(array $params)
+    {
+        return $this->post('promoteChatMember', $params);
+    }
+
+    public function exportChatInviteLink(array $params)
+    {
+        return $this->post('exportChatInviteLink', $params);
+    }
+
+    public function setChatPhoto(array $params)
+    {
+        return $this->uploadFile('setChatPhoto', $params);
+    }
+
+    public function deleteChatPhoto(array $params)
+    {
+        return $this->post('deleteChatPhoto', $params);
+    }
+
+    public function setChatTitle(array $params)
+    {
+        return $this->post('setChatTitle', $params);
+    }
+
+    public function setChatDescription(array $params)
+    {
+        return $this->post('setChatDescription', $params);
+    }
+
+    public function pinChatMessage(array $params)
+    {
+        return $this->post('pinChatMessage', $params);
+    }
+
+
+    public function unpinChatMessage(array $params)
+    {
+        return $this->post('unpinChatMessage', $params);
+    }
+
+    public function leaveChat(array $params)
+    {
+        return $this->post('leaveChat', $params);
+    }
+
+    public function getChat(array $params)
+    {
+        return $this->post('getChat', $params);
+    }
+
+    public function getChatAdministrators(array $params)
+    {
+        return $this->post('getChatAdministrators', $params);
+    }
+
+    public function getChatMembersCount(array $params)
+    {
+        return $this->post('getChatMembersCount', $params);
+    }
+
+    public function getChatMember(array $params)
+    {
+        return $this->post('getChatMember', $params);
+    }
+
+    public function setChatStickerSet(array $params)
+    {
+        return $this->post('setChatStickerSet', $params);
+    }
+
+    public function answerCallbackQuery(array $params)
+    {
+        return $this->post('answerCallbackQuery', $params);
+    }
 }
