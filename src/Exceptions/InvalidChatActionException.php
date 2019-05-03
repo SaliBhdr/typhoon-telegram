@@ -10,7 +10,7 @@ namespace Salibhdr\TyphoonTelegram\Exceptions;
 
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
-class InvalidChanActionException extends TelegramSDKException
+class InvalidChatActionException extends TelegramSDKException
 {
     public function __construct(array $chatActions)
     {

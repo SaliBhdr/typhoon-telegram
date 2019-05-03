@@ -6,18 +6,18 @@
 
 namespace Salibhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\SendVideoInterface;
-use Salibhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
+use Salibhdr\TyphoonTelegram\Api\Interfaces\SendAnimationInterface;
 use Salibhdr\TyphoonTelegram\Api\Traits\Captionable;
 use Salibhdr\TyphoonTelegram\Api\Traits\DisablesNotification;
 use Salibhdr\TyphoonTelegram\Api\Traits\HasDimensions;
 use Salibhdr\TyphoonTelegram\Api\Traits\HasDuration;
-use Salibhdr\TyphoonTelegram\Api\Traits\HasReplyMarkUp;
 use Salibhdr\TyphoonTelegram\Api\Traits\HasThumbnail;
 use Salibhdr\TyphoonTelegram\Api\Traits\Parsable;
+use Salibhdr\TyphoonTelegram\Api\Traits\HasReplyMarkUp;
 use Salibhdr\TyphoonTelegram\Api\Traits\RepliesToMessage;
+use Salibhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
 
-class SendVideo extends SendAbstract implements SendVideoInterface
+class SendAnimation extends SendAbstract implements SendAnimationInterface
 {
     use HasReplyMarkUp,
         DisablesNotification,
@@ -28,36 +28,22 @@ class SendVideo extends SendAbstract implements SendVideoInterface
         HasThumbnail,
         HasDimensions;
 
-    protected $video;
-
-    protected $supportStreaming;
-
-    public function sendMethod(): string
-    {
-        return 'sendVideo';
-    }
-
-    /**
-     * @param mixed $video
-     * @return SendVideo
-     */
-    public function video($video)
-    {
-        $this->video = $video;
-
-        return $this;
-    }
+    protected $animation;
 
     protected function addParams(): void
     {
         $this->params = [
             'chat_id' => $this->getChatId(),
-            'video' => $this->getVideo()
+            'animation' => $this->getAnimation(),
         ];
     }
 
     protected function addOptionalParams(): void
     {
+        if (!is_null($this->getCaption())) {
+            $this->params['caption'] = $this->getCaption();
+        }
+
         if (!is_null($this->getParsMode())) {
             $this->params['parse_mode'] = $this->getParsMode();
         }
@@ -90,31 +76,30 @@ class SendVideo extends SendAbstract implements SendVideoInterface
             $this->params['width'] = $this->getWidth();
         }
 
-        if (!is_null($this->isSupportsStreaming())) {
-            $this->params['supports_streaming'] = $this->isSupportsStreaming();
+        if (!is_null($this->getThumb())) {
+            $this->params['thumb'] = $this->getThumb();
         }
+    }
+
+    public function method(): string
+    {
+       return 'sendAnimation';
     }
 
     protected function requiredParams(): array
     {
-        return ['chat_id', 'video'];
+        return ['chat_id','animation'];
     }
 
-    public function getVideo()
+    public function animation($animation)
     {
-        return $this->video;
-    }
-
-    public function supportsStreaming()
-    {
-        $this->supportStreaming = true;
+        $this->animation = $animation;
 
         return $this;
     }
 
-    public function isSupportsStreaming(): bool
+    public function getAnimation()
     {
-        return $this->supportStreaming;
+        return $this->animation;
     }
-
 }
