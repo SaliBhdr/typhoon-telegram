@@ -8,7 +8,7 @@
 namespace Salibhdr\TyphoonTelegram\Api\Interfaces;
 
 
-interface GetFileIdInterface
+interface GetFileInterface
 {
 
     public function fileId(string $fileId);

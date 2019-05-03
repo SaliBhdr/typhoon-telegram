@@ -7,12 +7,12 @@
 namespace Salibhdr\TyphoonTelegram\Api\Methods;
 
 use Salibhdr\TyphoonTelegram\Api\Abstracts\GetAbstract;
-use Salibhdr\TyphoonTelegram\Api\Interfaces\GetFileIdInterface;
+use Salibhdr\TyphoonTelegram\Api\Interfaces\GetFileInterface;
 use Salibhdr\TyphoonTelegram\Api\Interfaces\GetUserProfilePhotosInterface;
 use Salibhdr\TyphoonTelegram\Exceptions\ProfilePhotoLimitRangeException;
 
 
-class GetFile extends GetAbstract implements GetFileIdInterface
+class GetFile extends GetAbstract implements GetFileInterface
 {
 
     protected $fileId;

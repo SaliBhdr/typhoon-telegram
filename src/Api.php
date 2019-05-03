@@ -217,4 +217,130 @@ class Api extends BaseApi
     {
         return $this->uploadFile('sendAnimation', $params);
     }
+
+    public function sendVideoNote(array $params)
+    {
+        return $this->uploadFile('sendVideoNote', $params);
+    }
+
+    public function sendMediaGroup(array $params)
+    {
+        return $this->uploadFile('sendMediaGroup', $params);
+    }
+
+    public function editMessageLiveLocation(array $params)
+    {
+        return $this->post('editMessageLiveLocation', $params);
+    }
+
+    public function stopMessageLiveLocation(array $params)
+    {
+        return $this->post('stopMessageLiveLocation', $params);
+    }
+
+    public function sendVenue(array $params)
+    {
+        return $this->post('sendVenue', $params);
+    }
+
+    public function sendContact(array $params)
+    {
+        return $this->post('sendContact', $params);
+    }
+
+    public function sendPoll(array $params)
+    {
+        return $this->post('sendPoll', $params);
+    }
+
+    public function kickChatMember(array $params)
+    {
+        return $this->post('kickChatMember', $params);
+    }
+
+    public function unbanChatMember(array $params)
+    {
+        return $this->post('unbanChatMember', $params);
+    }
+
+    public function restrictChatMember(array $params)
+    {
+        return $this->post('restrictChatMember', $params);
+    }
+
+    public function promoteChatMember(array $params)
+    {
+        return $this->post('promoteChatMember', $params);
+    }
+
+    public function exportChatInviteLink(array $params)
+    {
+        return $this->post('exportChatInviteLink', $params);
+    }
+
+    public function setChatPhoto(array $params)
+    {
+        return $this->uploadFile('setChatPhoto', $params);
+    }
+
+    public function deleteChatPhoto(array $params)
+    {
+        return $this->post('deleteChatPhoto', $params);
+    }
+
+    public function setChatTitle(array $params)
+    {
+        return $this->post('setChatTitle', $params);
+    }
+
+    public function setChatDescription(array $params)
+    {
+        return $this->post('setChatDescription', $params);
+    }
+
+    public function pinChatMessage(array $params)
+    {
+        return $this->post('pinChatMessage', $params);
+    }
+
+
+    public function unpinChatMessage(array $params)
+    {
+        return $this->post('unpinChatMessage', $params);
+    }
+
+    public function leaveChat(array $params)
+    {
+        return $this->post('leaveChat', $params);
+    }
+
+    public function getChat(array $params)
+    {
+        return $this->post('getChat', $params);
+    }
+
+    public function getChatAdministrators(array $params)
+    {
+        return $this->post('getChatAdministrators', $params);
+    }
+
+    public function getChatMembersCount(array $params)
+    {
+        return $this->post('getChatMembersCount', $params);
+    }
+
+    public function getChatMember(array $params)
+    {
+        return $this->post('getChatMember', $params);
+    }
+
+    public function setChatStickerSet(array $params)
+    {
+        return $this->post('setChatStickerSet', $params);
+    }
+
+    public function answerCallbackQuery(array $params)
+    {
+        return $this->post('answerCallbackQuery', $params);
+    }
 }
