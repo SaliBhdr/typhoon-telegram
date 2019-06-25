@@ -2,6 +2,7 @@
 
 namespace SaliBhdr\TyphoonTelegram;
 
+use Illuminate\Support\Str;
 use SaliBhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
 use SaliBhdr\TyphoonTelegram\Api\Methods\GetMe;
 use SaliBhdr\TyphoonTelegram\Api\Methods\SendDynamic;
@@ -9,6 +10,7 @@ use SaliBhdr\TyphoonTelegram\Exceptions\InvalidChatActionException;
 use SaliBhdr\TyphoonTelegram\HttpClients\GuzzleHttpClient;
 use SaliBhdr\TyphoonTelegram\Objects\Dynamic;
 use Telegram\Bot\Api as BaseApi;
+use Telegram\Bot\TelegramResponse;
 
 /*** Class Api.
  */
@@ -38,13 +40,13 @@ class Api extends BaseApi
      *
      *
      * @param string $token The Telegram Bot API Access Token.
-     * @param bool $async (Optional) Indicates if the request to Telegram
-     *                                                        will be asynchronous (non-blocking).
-     * @param string|\Telegram\Bot\HttpClients\HttpClientInterface $http_client_handler (Optional) Custom HTTP Client Handler.
+     * @param bool $async (Optional) Indicates if the request to Telegram will be asynchronous (non-blocking).
+     * @param string|\Telegram\Bot\HttpClients\HttpClientInterface $http_client_handler (Optional) Custom HTTP
+     *     Client Handler.
      *
      * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
-    public function __construct(?string $token = null, bool $async = false, $http_client_handler = null)
+    public function __construct(?string $token = NULL, bool $async = FALSE, $http_client_handler = NULL)
     {
         if (!isset($http_client_handler)) {
             $http_client_handler = new GuzzleHttpClient();
@@ -57,6 +59,7 @@ class Api extends BaseApi
      *
      * @param  string $method
      * @param  array $parameters
+     *
      * @return mixed
      * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
@@ -70,6 +73,7 @@ class Api extends BaseApi
 
     /**
      * @param $apiMethodObj
+     *
      * @return mixed
      * @throws Exceptions\TelegramParamsRequiredException
      */
@@ -83,10 +87,9 @@ class Api extends BaseApi
 
         if ($apiMethodObj instanceof GetMe) {
             return $this->{$apiMethodObj->method()};
-
         }
 
-        return $this->{$apiMethodObj->sendMethod()}($apiMethodObj->getParams());
+        return $this->{$apiMethodObj->method()}($apiMethodObj->getParams());
 
     }
 
@@ -98,12 +101,13 @@ class Api extends BaseApi
     public function getDefaultHeaders()
     {
         return [
-            'User-Agent' => 'Telegram Bot PHP SDK v' . Api::VERSION . ' - (https://github.com/salibhdr/typhoon-telegram-bot)',
+            'User-Agent' => 'Telegram Bot PHP SDK v' . Api::VERSION . ' - (https://github.com/SaliBhdr/typhoon-telegram)',
         ];
     }
 
     /**
      * @param array $keyboard
+     *
      * @return array
      */
     public function inlineKeyboardMarkup(array $keyboard)
@@ -150,7 +154,7 @@ class Api extends BaseApi
 
         if (!is_null($bot)
             && is_array($bot)
-            && empty($bot)
+            && !empty($bot)
             && isset($bot['botToken'])
             && isset($bot['is_active'])
             && $bot['is_active'])
@@ -172,22 +176,22 @@ class Api extends BaseApi
         $action = substr($method, 0, 3);
         if ($action === 'get') {
             /* @noinspection PhpUndefinedFunctionInspection */
-            $class_name = studly_case(substr($method, 3));
-            $class = 'Telegram\Bot\Objects\\'.$class_name;
-            $response = $this->post($method, $arguments[0] ?: []);
+            $class_name = Str::studly(substr($method, 3));
+            $class = 'Telegram\Bot\Objects\\' . $class_name;
+            $response = $this->post($method, $arguments[0] ? : []);
 
             if (!class_exists($class)) {
-                $class = 'SaliBhdr\TyphoonTelegram\Objects\\'.$class_name;
+                $class = 'SaliBhdr\TyphoonTelegram\Objects\\' . $class_name;
             }
 
-            if(class_exists($class)){
+            if (class_exists($class)) {
                 return new $class($response->getDecodedBody());
             }
 
             return $response;
         }
 
-        return false;
+        return FALSE;
     }
 
     /**
@@ -204,12 +208,12 @@ class Api extends BaseApi
      *
      * @link https://core.telegram.org/bots/api#senddocument
      *
-     * @param array    $params
+     * @param array $params
      *
      * @var int|string $params ['chat_id']
-     * @var string     $params ['document']
-     * @var int        $params ['reply_to_message_id']
-     * @var string     $params ['reply_markup']
+     * @var string $params ['document']
+     * @var int $params ['reply_to_message_id']
+     * @var string $params ['reply_markup']
      *
      * @return Message
      */

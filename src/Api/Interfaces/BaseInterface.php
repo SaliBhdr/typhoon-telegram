@@ -14,4 +14,5 @@ interface BaseInterface
 
     public function getParams() : array;
 
+    public function method() : string;
 }
