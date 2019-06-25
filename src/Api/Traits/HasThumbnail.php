@@ -5,7 +5,7 @@
  * Time: 9:58 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Traits;
+namespace SaliBhdr\TyphoonTelegram\Api\Traits;
 
 trait HasThumbnail
 {

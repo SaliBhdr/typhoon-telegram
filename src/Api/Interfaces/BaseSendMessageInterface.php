@@ -5,7 +5,7 @@
  * Time: 2:47 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Interfaces;
+namespace SaliBhdr\TyphoonTelegram\Api\Interfaces;
 
 
 interface BaseSendMessageInterface extends BaseInterface

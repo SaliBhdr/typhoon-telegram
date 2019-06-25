@@ -1,6 +1,6 @@
 <?php
 
-namespace Salibhdr\TyphoonTelegram\Facades;
+namespace SaliBhdr\TyphoonTelegram\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
@@ -39,11 +39,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static commandsHandler($webhook = false)
  * @method static isMessageType($type, $object)
  * @method static detectMessageType($object)
- * @method static send(\Salibhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface $object)
+ * @method static send(\SaliBhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface $object)
  *
  * Class Telegram.
  * 
- * @see \Salibhdr\TyphoonTelegram\Api
+ * @see \SaliBhdr\TyphoonTelegram\Api
  */
 class Telegram extends Facade
 {

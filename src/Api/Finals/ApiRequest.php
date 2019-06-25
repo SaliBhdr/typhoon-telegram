@@ -5,7 +5,7 @@
  * Time: 10:29 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Finals;
+namespace SaliBhdr\TyphoonTelegram\Api\Finals;
 
 final class ApiRequest
 {

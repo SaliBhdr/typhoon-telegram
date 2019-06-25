@@ -1,6 +1,6 @@
 <?php
 
-namespace Salibhdr\TyphoonTelegram\HttpClients;
+namespace SaliBhdr\TyphoonTelegram\HttpClients;
 
 use GuzzleHttp\Client;
 use Telegram\Bot\HttpClients\GuzzleHttpClient as BaseGuzzleHttpClient;

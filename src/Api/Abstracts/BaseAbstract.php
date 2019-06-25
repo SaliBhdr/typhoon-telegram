@@ -5,11 +5,11 @@
  * Time: 9:50 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Abstracts;
+namespace SaliBhdr\TyphoonTelegram\Api\Abstracts;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
-use Salibhdr\TyphoonTelegram\Exceptions\TelegramParamsRequiredException;
-use Salibhdr\TyphoonTelegram\Facades\Telegram;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
+use SaliBhdr\TyphoonTelegram\Exceptions\TelegramParamsRequiredException;
+use SaliBhdr\TyphoonTelegram\Facades\Telegram;
 
 abstract class BaseAbstract implements BaseInterface
 {
@@ -62,7 +62,7 @@ abstract class BaseAbstract implements BaseInterface
 
     /**
      * @return array
-     * @throws \Salibhdr\TyphoonTelegram\Exceptions\TelegramParamsRequiredException
+     * @throws \SaliBhdr\TyphoonTelegram\Exceptions\TelegramParamsRequiredException
      */
     public function getParams(): array
     {

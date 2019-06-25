@@ -4,12 +4,12 @@
  * Time: 4:22 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Methods;
+namespace SaliBhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Api\Abstracts\GetAbstract;
-use Salibhdr\TyphoonTelegram\Api\Interfaces\GetFileInterface;
-use Salibhdr\TyphoonTelegram\Api\Interfaces\GetUserProfilePhotosInterface;
-use Salibhdr\TyphoonTelegram\Exceptions\ProfilePhotoLimitRangeException;
+use SaliBhdr\TyphoonTelegram\Api\Abstracts\GetAbstract;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\GetFileInterface;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\GetUserProfilePhotosInterface;
+use SaliBhdr\TyphoonTelegram\Exceptions\ProfilePhotoLimitRangeException;
 
 
 class GetFile extends GetAbstract implements GetFileInterface

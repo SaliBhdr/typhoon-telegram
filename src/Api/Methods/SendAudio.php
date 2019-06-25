@@ -4,17 +4,17 @@
  * Time: 4:22 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Methods;
+namespace SaliBhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\SendAudioInterface;
-use Salibhdr\TyphoonTelegram\Api\Traits\Captionable;
-use Salibhdr\TyphoonTelegram\Api\Traits\DisablesNotification;
-use Salibhdr\TyphoonTelegram\Api\Traits\HasDuration;
-use Salibhdr\TyphoonTelegram\Api\Traits\HasThumbnail;
-use Salibhdr\TyphoonTelegram\Api\Traits\Parsable;
-use Salibhdr\TyphoonTelegram\Api\Traits\HasReplyMarkUp;
-use Salibhdr\TyphoonTelegram\Api\Traits\RepliesToMessage;
-use Salibhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\SendAudioInterface;
+use SaliBhdr\TyphoonTelegram\Api\Traits\Captionable;
+use SaliBhdr\TyphoonTelegram\Api\Traits\DisablesNotification;
+use SaliBhdr\TyphoonTelegram\Api\Traits\HasDuration;
+use SaliBhdr\TyphoonTelegram\Api\Traits\HasThumbnail;
+use SaliBhdr\TyphoonTelegram\Api\Traits\Parsable;
+use SaliBhdr\TyphoonTelegram\Api\Traits\HasReplyMarkUp;
+use SaliBhdr\TyphoonTelegram\Api\Traits\RepliesToMessage;
+use SaliBhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
 
 class SendAudio extends SendAbstract implements SendAudioInterface
 {

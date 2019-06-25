@@ -5,14 +5,14 @@
  * Time: 4:22 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Methods;
+namespace SaliBhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\SendMessageInterface;
-use Salibhdr\TyphoonTelegram\Api\Traits\DisablesNotification;
-use Salibhdr\TyphoonTelegram\Api\Traits\Parsable;
-use Salibhdr\TyphoonTelegram\Api\Traits\HasReplyMarkUp;
-use Salibhdr\TyphoonTelegram\Api\Traits\RepliesToMessage;
-use Salibhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\SendMessageInterface;
+use SaliBhdr\TyphoonTelegram\Api\Traits\DisablesNotification;
+use SaliBhdr\TyphoonTelegram\Api\Traits\Parsable;
+use SaliBhdr\TyphoonTelegram\Api\Traits\HasReplyMarkUp;
+use SaliBhdr\TyphoonTelegram\Api\Traits\RepliesToMessage;
+use SaliBhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
 
 class SendMessage extends SendAbstract implements SendMessageInterface
 {

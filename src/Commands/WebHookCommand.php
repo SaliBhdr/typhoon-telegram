@@ -5,11 +5,11 @@
  * Time: 11:15 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Commands;
+namespace SaliBhdr\TyphoonTelegram\Commands;
 
 
 use Illuminate\Console\Command;
-use Salibhdr\TyphoonTelegram\Facades\Telegram;
+use SaliBhdr\TyphoonTelegram\Facades\Telegram;
 
 class WebHookCommand extends Command
 {
@@ -19,7 +19,7 @@ class WebHookCommand extends Command
      *
      * @var string
      */
-    protected $name = 'tytelegram:set-webhooks';
+    protected $name = 'telegram:set-webhooks';
 
     /**    * The console command description.
      *
