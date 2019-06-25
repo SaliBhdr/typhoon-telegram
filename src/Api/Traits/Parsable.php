@@ -5,9 +5,9 @@
  * Time: 9:58 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Traits;
+namespace SaliBhdr\TyphoonTelegram\Api\Traits;
 
-use Salibhdr\TyphoonTelegram\Api\Finals\Parse;
+use SaliBhdr\TyphoonTelegram\Api\Finals\Parse;
 
 trait Parsable
 {

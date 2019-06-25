@@ -6,12 +6,12 @@
  * Time: 9:52 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Methods;
+namespace SaliBhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
-use Salibhdr\TyphoonTelegram\Api\Finals\ApiRequest;
-use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface;
-use Salibhdr\TyphoonTelegram\Exceptions\RequestMethodInvalidException;
+use SaliBhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Api\Finals\ApiRequest;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface;
+use SaliBhdr\TyphoonTelegram\Exceptions\RequestMethodInvalidException;
 
 class SendDynamic extends SendAbstract implements BaseSendMessageInterface
 {

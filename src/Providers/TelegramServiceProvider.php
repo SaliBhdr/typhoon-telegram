@@ -1,13 +1,13 @@
 <?php
 
-namespace Salibhdr\TyphoonTelegram\Providers;
+namespace SaliBhdr\TyphoonTelegram\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Container\Container as Application;
 use Laravel\Lumen\Application as LumenApplication;
 use Illuminate\Foundation\Application as LaravelApplication;
-use Salibhdr\TyphoonTelegram\Api;
-use Salibhdr\TyphoonTelegram\Commands\WebHookCommand;
+use SaliBhdr\TyphoonTelegram\Api;
+use SaliBhdr\TyphoonTelegram\Commands\WebHookCommand;
 
 /*** Class TelegramServiceProvider.
  */

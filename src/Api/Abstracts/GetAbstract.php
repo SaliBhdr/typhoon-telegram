@@ -5,9 +5,9 @@
  * Time: 9:50 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Abstracts;
+namespace SaliBhdr\TyphoonTelegram\Api\Abstracts;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
 
 abstract class GetAbstract extends BaseAbstract implements BaseInterface
 {

@@ -1,5 +1,5 @@
 {
-    "name": "salibhdr/typhoon-telegram-bot",
+    "name": "salibhdr/typhoon-telegram",
     "description": "The Unofficial Telegram Bot API PHP SDK",
     "keywords": ["telegram", "telegram bot", "telegram bot api", "telegram sdk", "telegram php", "laravel telegram", "laravel"],
     "type": "library",
@@ -18,7 +18,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Salibhdr\\TyphoonTelegram\\": "src/"
+            "SaliBhdr\\TyphoonTelegram\\": "src/"
         }
     },
     "config": {

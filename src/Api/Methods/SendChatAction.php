@@ -5,11 +5,11 @@
  * Time: 4:22 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Methods;
+namespace SaliBhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\SendChatActionInterface;
-use Salibhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
-use Salibhdr\TyphoonTelegram\Exceptions\InvalidChatActionException;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\SendChatActionInterface;
+use SaliBhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Exceptions\InvalidChatActionException;
 
 class SendChatAction extends SendAbstract implements SendChatActionInterface
 {

@@ -5,11 +5,11 @@
  * Time: 4:22 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Methods;
+namespace SaliBhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\ForwardMessageInterface;
-use Salibhdr\TyphoonTelegram\Api\Traits\DisablesNotification;
-use Salibhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\ForwardMessageInterface;
+use SaliBhdr\TyphoonTelegram\Api\Traits\DisablesNotification;
+use SaliBhdr\TyphoonTelegram\Api\Abstracts\SendAbstract;
 
 class FrowardMessage extends SendAbstract implements ForwardMessageInterface
 {

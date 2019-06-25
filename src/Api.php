@@ -1,13 +1,13 @@
 <?php
 
-namespace Salibhdr\TyphoonTelegram;
+namespace SaliBhdr\TyphoonTelegram;
 
-use Salibhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
-use Salibhdr\TyphoonTelegram\Api\Methods\GetMe;
-use Salibhdr\TyphoonTelegram\Api\Methods\SendDynamic;
-use Salibhdr\TyphoonTelegram\Exceptions\InvalidChatActionException;
-use Salibhdr\TyphoonTelegram\HttpClients\GuzzleHttpClient;
-use Salibhdr\TyphoonTelegram\Objects\Dynamic;
+use SaliBhdr\TyphoonTelegram\Api\Interfaces\BaseInterface;
+use SaliBhdr\TyphoonTelegram\Api\Methods\GetMe;
+use SaliBhdr\TyphoonTelegram\Api\Methods\SendDynamic;
+use SaliBhdr\TyphoonTelegram\Exceptions\InvalidChatActionException;
+use SaliBhdr\TyphoonTelegram\HttpClients\GuzzleHttpClient;
+use SaliBhdr\TyphoonTelegram\Objects\Dynamic;
 use Telegram\Bot\Api as BaseApi;
 
 /*** Class Api.
@@ -177,7 +177,7 @@ class Api extends BaseApi
             $response = $this->post($method, $arguments[0] ?: []);
 
             if (!class_exists($class)) {
-                $class = 'Salibhdr\TyphoonTelegram\Objects\\'.$class_name;
+                $class = 'SaliBhdr\TyphoonTelegram\Objects\\'.$class_name;
             }
 
             if(class_exists($class)){

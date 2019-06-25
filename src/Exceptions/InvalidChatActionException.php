@@ -6,7 +6,7 @@
  * Time: 8:09 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Exceptions;
+namespace SaliBhdr\TyphoonTelegram\Exceptions;
 
 use Telegram\Bot\Exceptions\TelegramSDKException;
 

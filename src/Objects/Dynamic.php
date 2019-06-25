@@ -1,6 +1,6 @@
 <?php
 
-namespace Salibhdr\TyphoonTelegram\Objects;
+namespace SaliBhdr\TyphoonTelegram\Objects;
 
 /**
  * Class Chat.

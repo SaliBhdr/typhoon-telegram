@@ -5,9 +5,9 @@
  * Time: 4:22 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Api\Methods;
+namespace SaliBhdr\TyphoonTelegram\Api\Methods;
 
-use Salibhdr\TyphoonTelegram\Facades\Telegram;
+use SaliBhdr\TyphoonTelegram\Facades\Telegram;
 
 class GetMe
 {

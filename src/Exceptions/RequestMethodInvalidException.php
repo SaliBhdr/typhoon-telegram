@@ -5,9 +5,9 @@
  * Time: 10:10 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Exceptions;
+namespace SaliBhdr\TyphoonTelegram\Exceptions;
 
-use Salibhdr\TyphoonTelegram\Api\Finals\ApiRequest;
+use SaliBhdr\TyphoonTelegram\Api\Finals\ApiRequest;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class RequestMethodInvalidException extends TelegramSDKException
