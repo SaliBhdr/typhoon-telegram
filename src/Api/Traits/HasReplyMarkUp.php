@@ -11,6 +11,8 @@ trait HasReplyMarkUp
 {
 
     protected $parsMode;
+    
+    protected $replyMarkup;
 
     public function replyMarkup(array $replyMarkup)
     {

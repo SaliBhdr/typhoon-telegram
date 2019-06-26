@@ -13,11 +13,14 @@ class TelegramParamsRequiredException extends TelegramSDKException
 {
     public function __construct(array $requiredParams)
     {
-        if(!empty($requiredParams)){
-            $requiredParams = implode($requiredParams);
+        if (!empty($requiredParams)) {
 
-            $message = "{$requiredParams} params are required";
-        }else{
+            $params = implode($requiredParams);
+            if (count($requiredParams) > 1)
+                $message = "{$params} parameters are required, please provide these parameters";
+            else
+                $message = "{$params} parameter is required, please provide this parameter";
+        } else {
             $message = 'No params has been set';
         }
 
