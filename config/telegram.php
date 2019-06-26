@@ -35,7 +35,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | If you'd like to use a custom HTTP Client Handler.
-    | Should be an instance of \Telegram\Bot\HttpClients\HttpClientInterface
+    | Should be an instance of \SaliBhdr\TyphoonTelegram\HttpClients\HttpClientInterface
     |
     | Default: GuzzlePHP
     |
@@ -63,35 +63,29 @@ return [
     | If you'd like to use the SDK's built in command handler system,
     | You can register all the commands here.
     |
-    | The command class should extend the \Telegram\Bot\Commands\Command class.
+    | The command class should extend the \SaliBhdr\TyphoonTelegram\Commands\Command class.
     |
     | Default: The SDK registers, a help command which when a user sends /help
     | will respond with a list of available commands and description.
     |
     */
     'commands' => [
-        Telegram\Bot\Commands\HelpCommand::class,
+        SaliBhdr\TyphoonTelegram\CommandsLaravel\HelpCommand::class,
     ],
 
 
     'bots' => [
-        'mainBot' => [
-            'is_active' => true,
-            'baseUrl' => 'https://5df7d54d.ngrok.io',
-            'botToken' => '554656542:AAGTEmWvM3oMaZq5ejsBf7Ag8i7oKNgdv2Q',
+        'CustomBotName' => [
+            'is_active' => false,
+            'baseUrl' => 'HOST DOMAIN',
+            'botToken' => 'YOUR BOT TOKEN',
             'controller' => 'Telegram\V1\MainBotController@handleRequests'
         ],
-        'poster-bot-1' => [
+        'CustomBotName2' => [
             'is_active' => false,
-            'baseUrl' => 'https://a2db17a0.ngrok.io',
-            'botToken' => '474282837:AAHZn7vaGmz6R938MrHUnq36aU8uO8IzEj8',
-            'controller' => 'Telegram\V1\PosterBotController@handleRequests'
-        ],
-        'poster-bot-2' => [
-            'is_active' => false,
-            'baseUrl' => 'https://a2db17a0.ngrok.io',
-            'botToken' => '474936749:AAFZ_d_cYEoaWzkDMyO_nks59DrqmVjgLHw',
-            'controller' => 'Telegram\V1\PosterBotController@handleRequests'
+            'baseUrl' => 'HOST DOMAIN',
+            'botToken' => 'YOUR BOT TOKEN',
+            'controller' => 'Telegram\V1\SecondBotController@handleRequests'
         ],
     ]
 

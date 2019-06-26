@@ -1,13 +1,12 @@
 {
-    "name": "salibhdr/typhoon-telegram-bot",
+    "name": "salibhdr/typhoon-telegram",
     "description": "The Unofficial Telegram Bot API PHP SDK",
     "keywords": ["telegram", "telegram bot", "telegram bot api", "telegram sdk", "telegram php", "laravel telegram", "laravel"],
     "type": "library",
     "require": {
         "php": ">=7.0.0",
         "guzzlehttp/guzzle": "~6.0",
-        "illuminate/support": "~5.0",
-        "irazasyed/telegram-bot-sdk": "^2.0"
+        "illuminate/support": "~5.0"
     },
     "license": "BSD-3-Clause",
     "authors": [
@@ -18,7 +17,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Salibhdr\\TyphoonTelegram\\": "src/"
+            "SaliBhdr\\TyphoonTelegram\\": "src/"
         }
     },
     "config": {
