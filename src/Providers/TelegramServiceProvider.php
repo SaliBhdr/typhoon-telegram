@@ -2,10 +2,10 @@
 
 namespace SaliBhdr\TyphoonTelegram\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Container\Container as Application;
-use Laravel\Lumen\Application as LumenApplication;
 use Illuminate\Foundation\Application as LaravelApplication;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Lumen\Application as LumenApplication;
 use SaliBhdr\TyphoonTelegram\Api;
 use SaliBhdr\TyphoonTelegram\Commands\WebHookCommand;
 
@@ -30,10 +30,12 @@ class TelegramServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerCommands();
+        $this->app->register('SaliBhdr\TyphoonTelegram\Providers\RouteServiceProvider');
     }
 
 
-    /**    * Setup the config.
+    /**
+     * Setup the config.
      *
      * @param \Illuminate\Contracts\Container\Container $app
      *
@@ -41,14 +43,9 @@ class TelegramServiceProvider extends ServiceProvider
      */
     protected function setupConfig(Application $app)
     {
-        $source = __DIR__ . '/../../config/telegram.php';
+        $source = $this->getConfigFile();
 
-        if (class_exists('Illuminate\Foundation\Application') && $app instanceof LaravelApplication && $app->runningInConsole()) {
-            $this->publishes([$source => config_path('telegram.php')]);
-        } elseif (class_exists('Laravel\Lumen\Application') && $app instanceof LumenApplication) {
-            $app->configure('telegram');
-        }
-
+        $this->addConfig($source, $app);
 
         $this->mergeConfigFrom($source, 'telegram');
     }
@@ -90,12 +87,6 @@ class TelegramServiceProvider extends ServiceProvider
         });
 
         $app->alias(Api::class, 'telegram');
-
-        $config = config('telegram');
-
-        if ($config['automatic-routes'] ?? false)
-            include __DIR__ . '/../routes.php';
-
     }
 
     /**    * Get the services provided by the provider.
@@ -113,4 +104,20 @@ class TelegramServiceProvider extends ServiceProvider
             WebHookCommand::class,
         ]);
     }
+
+    private function addConfig($source, Application $app)
+    {
+        if (class_exists('Illuminate\Foundation\Application') && $app instanceof LaravelApplication && $app->runningInConsole()) {
+            $this->publishes([$source => config_path('telegram.php')]);
+        } elseif (class_exists('Laravel\Lumen\Application') && $app instanceof LumenApplication) {
+            $app->configure('telegram');
+        }
+    }
+
+    private function getConfigFile()
+    {
+        return __DIR__ . '/../../config/telegram.php';
+    }
+
+
 }

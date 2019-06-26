@@ -86,7 +86,7 @@ class Api extends BaseApi
 
         }
 
-        return $this->{$apiMethodObj->sendMethod()}($apiMethodObj->getParams());
+        return $this->{$apiMethodObj->method()}($apiMethodObj->getParams());
 
     }
 

@@ -58,17 +58,23 @@ class WebHookCommand extends Command
 
                 $baseUrl = $setting['baseUrl'] ?? url();
 
-                $webHookResponse = Telegram::setWebhook(['url' => "{$baseUrl}/{$setting['botToken']}/webhook"], false);
+                $url = rtrim($baseUrl,"/");
+
+                try{
+                    $webHookResponse = Telegram::setWebhook(['url' => "{$url}/{$setting['botToken']}/webhook"], false);
+
+                    $webHookResponse = $webHookResponse->getRawResponse();
+
+                    if (isset($webHookResponse[0]) && $webHookResponse[0] === true)
+                        $this->line(" $row) `{$botName}` webhook response: <info>Webhook set</info>");
+                    else
+                        $this->line(" $row) `{$botName}` webhook response: <error>Webhook Not Set</error>");
+
+                }catch (\Exception $e){
+                    $this->line(" $row) `{$botName}` webhook response: <error>". $e->getMessage()."</error>");
+                }
 
                 $this->line("");
-
-                $webHookResponse = $webHookResponse->getRawResponse();
-
-                if (isset($webHookResponse[0]) && $webHookResponse[0] === true)
-                    $this->line(" $row) `{$botName}` webhook response: <info>Webhook set</info>");
-                else
-                    $this->line(" $row) `{$botName}` webhook response: <error>Webhook Not Set</error>");
-
             }else{
                 $deactiveCount++;
 
