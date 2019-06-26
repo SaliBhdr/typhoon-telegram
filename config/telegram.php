@@ -35,7 +35,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | If you'd like to use a custom HTTP Client Handler.
-    | Should be an instance of \Telegram\Bot\HttpClients\HttpClientInterface
+    | Should be an instance of \SaliBhdr\TyphoonTelegram\HttpClients\HttpClientInterface
     |
     | Default: GuzzlePHP
     |
@@ -63,14 +63,14 @@ return [
     | If you'd like to use the SDK's built in command handler system,
     | You can register all the commands here.
     |
-    | The command class should extend the \Telegram\Bot\Commands\Command class.
+    | The command class should extend the \SaliBhdr\TyphoonTelegram\Commands\Command class.
     |
     | Default: The SDK registers, a help command which when a user sends /help
     | will respond with a list of available commands and description.
     |
     */
     'commands' => [
-        Telegram\Bot\Commands\HelpCommand::class,
+        SaliBhdr\TyphoonTelegram\CommandsLaravel\HelpCommand::class,
     ],
 
 
