@@ -3,6 +3,9 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request;
 
 
+use SaliBhdr\TyphoonTelegram\Telegram\Api;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+
 /**
  * Class Request.
  *

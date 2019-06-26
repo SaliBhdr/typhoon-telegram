@@ -116,6 +116,7 @@ abstract class BaseAbstract implements BaseInterface
      * @param  string $method
      * @param  array $parameters
      * @return mixed
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
      */
     public static function __callStatic($method, $parameters)
     {
@@ -124,10 +125,13 @@ abstract class BaseAbstract implements BaseInterface
 
     /**
      * @param string $botName
+     * @return BaseAbstract
      */
     public function bot(string $botName)
     {
         $this->botName = $botName;
+
+        return $this;
     }
 
 
