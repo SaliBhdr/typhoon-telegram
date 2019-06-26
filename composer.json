@@ -6,8 +6,7 @@
     "require": {
         "php": ">=7.0.0",
         "guzzlehttp/guzzle": "~6.0",
-        "illuminate/support": "~5.0",
-        "irazasyed/telegram-bot-sdk": "^2.0"
+        "illuminate/support": "~5.0"
     },
     "license": "BSD-3-Clause",
     "authors": [
