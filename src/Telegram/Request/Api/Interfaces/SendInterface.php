@@ -8,7 +8,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces;
 
 
-interface SendMessageInterface extends BaseSendMessageInterface
+interface SendInterface extends BaseSendInterface
 {
 
     public function text($text);

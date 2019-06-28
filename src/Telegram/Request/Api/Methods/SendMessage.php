@@ -8,13 +8,13 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\SendMessageInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\SendInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
 
-class SendMessage extends SendAbstract implements SendMessageInterface
+class SendMessage extends SendAbstract implements SendInterface
 {
     use HasReplyMarkUp,
         DisablesNotification,

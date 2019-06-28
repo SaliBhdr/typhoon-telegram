@@ -8,7 +8,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces;
 
 
-interface SendAnimationInterface extends BaseSendMessageInterface
+interface SendAnimationInterface extends BaseSendInterface
 {
 
     public function animation($animation);

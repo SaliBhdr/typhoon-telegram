@@ -8,7 +8,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces;
 
 
-interface SendChatActionInterface extends BaseSendMessageInterface
+interface SendChatActionInterface extends BaseSendInterface
 {
 
    public function action(string $action);

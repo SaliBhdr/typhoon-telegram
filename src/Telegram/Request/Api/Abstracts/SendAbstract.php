@@ -7,23 +7,12 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseSendMessageInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseSendInterface;
+use Salibhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasChatId;
 
-abstract class SendAbstract extends BaseAbstract implements BaseSendMessageInterface
+abstract class SendAbstract extends BaseAbstract implements BaseSendInterface
 {
 
-    protected $chatId;
-
-    public function chatId($chatId)
-    {
-        $this->chatId = $chatId;
-
-        return $this;
-    }
-
-    public function getChatId()
-    {
-        return $this->chatId;
-    }
+    use HasChatId;
 
 }
