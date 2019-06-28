@@ -2,14 +2,10 @@
 
 namespace SaliBhdr\TyphoonTelegram\Laravel\Providers;
 
-use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Lumen\Application as LumenApplication;
 use SaliBhdr\TyphoonTelegram\Laravel\Commands\WebHookCommand;
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
 
-/*** Class TelegramServiceProvider.
- */
 abstract class TelegramServiceProvider extends ServiceProvider
 {
     /**
@@ -20,19 +16,11 @@ abstract class TelegramServiceProvider extends ServiceProvider
     protected $defer = TRUE;
 
     /**
-     * Holds path to Config File.
-     *
-     * @var string
-     */
-    protected $config_filepath;
-
-    /**
      * Bootstrap the application events.
      */
     public function boot()
     {
-        $this->registerCommands();
-        $this->app->register('SaliBhdr\TyphoonTelegram\Providers\RouteServiceProvider');
+        $this->app->register(RouteServiceProvider::class);
     }
 
     /**
@@ -42,9 +30,11 @@ abstract class TelegramServiceProvider extends ServiceProvider
     {
         $this->registerExceptionHandler();
 
+        $this->registerCommands();
+
         $this->setupConfig();
 
-        $this->registerApi();
+        $this->bindMainClass();
     }
 
     /**
@@ -63,7 +53,7 @@ abstract class TelegramServiceProvider extends ServiceProvider
      * Initialize Telegram Bot SDK Library with Default Config.
      *
      */
-    protected function registerApi()
+    protected function bindMainClass()
     {
         $this->app->singleton(Api::class, function ($app) {
 
@@ -112,6 +102,6 @@ abstract class TelegramServiceProvider extends ServiceProvider
 
     protected function getConfigFile()
     {
-        return __DIR__ . '/../../config/telegram.php';
+        return __DIR__ . '/../../../config/telegram.php';
     }
 }

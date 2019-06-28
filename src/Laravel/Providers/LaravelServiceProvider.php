@@ -10,7 +10,7 @@ namespace Salibhdr\TyphoonTelegram\Laravel\Providers;
 
 use Illuminate\Foundation\Application as LaravelApplication;
 
-class TelegramLaravelServiceProvider extends TelegramServiceProvider
+class LaravelServiceProvider extends TelegramServiceProvider
 {
     /** @var LaravelApplication $app */
     protected $app;

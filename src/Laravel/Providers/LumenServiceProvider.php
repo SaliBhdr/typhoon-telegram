@@ -10,7 +10,7 @@ namespace Salibhdr\TyphoonTelegram\Laravel\Providers;
 
 use Laravel\Lumen\Application as LumenApplication;
 
-class TelegramLumenServiceProvider extends TelegramServiceProvider
+class LumenServiceProvider extends TelegramServiceProvider
 {
     /** @var  LumenApplication $app*/
     protected $app;
