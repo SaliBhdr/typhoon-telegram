@@ -8,23 +8,23 @@
 
 namespace SaliBhdr\TyphoonTelegram\Laravel\Providers;
 
-use Illuminate\Foundation\Application as LaravelApplication;
+use Laravel\Lumen\Application as LumenApplication;
 
-class TelegramLaravelServiceProvider extends TelegramServiceProvider
+class LumenServiceProvider extends TelegramServiceProvider
 {
-    /** @var LaravelApplication $app */
+    /** @var  LumenApplication $app*/
     protected $app;
 
     protected function addConfig()
     {
-        $this->publishes([$this->getConfigFile() => config_path('telegram.php')]);
+        $this->app->configure('telegram');
     }
 
     protected function registerExceptionHandler()
     {
         $this->app->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
-            \SaliBhdr\TyphoonTelegram\Laravel\Exceptions\LaravelExceptionHandler::class
+            \SaliBhdr\TyphoonTelegram\Laravel\Exceptions\LumenExceptionHandler::class
         );
     }
 }

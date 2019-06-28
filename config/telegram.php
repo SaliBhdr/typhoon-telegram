@@ -35,7 +35,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | If you'd like to use a custom HTTP Client Handler.
-    | Should be an instance of \SaliBhdr\TyphoonTelegram\HttpClients\HttpClientInterface
+    | Should be an instance of \SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\HttpClientInterface
     |
     | Default: GuzzlePHP
     |
@@ -70,7 +70,7 @@ return [
     |
     */
     'commands' => [
-        SaliBhdr\TyphoonTelegram\CommandsLaravel\HelpCommand::class,
+        SaliBhdr\TyphoonTelegram\Telegram\Commands\HelpCommand::class,
     ],
 
 
