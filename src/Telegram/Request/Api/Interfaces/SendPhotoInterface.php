@@ -8,7 +8,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces;
 
 
-interface SendPhotoInterface extends BaseSendMessageInterface
+interface SendPhotoInterface extends BaseSendInterface
 {
 
     public function photo($photo);

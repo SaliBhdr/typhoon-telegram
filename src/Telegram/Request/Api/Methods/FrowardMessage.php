@@ -9,10 +9,10 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\ForwardMessageInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\ForwardInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
 
-class FrowardMessage extends SendAbstract implements ForwardMessageInterface
+class FrowardMessage extends SendAbstract implements ForwardInterface
 {
     use DisablesNotification;
 

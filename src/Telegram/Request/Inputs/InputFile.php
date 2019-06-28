@@ -1,6 +1,6 @@
 <?php
 
-namespace SaliBhdr\TyphoonTelegram\Telegram\Helpers;
+namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Inputs;
 
 use GuzzleHttp\Psr7;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;

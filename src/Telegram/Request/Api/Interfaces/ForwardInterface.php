@@ -7,7 +7,7 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces;
 
-interface ForwardMessageInterface extends BaseSendMessageInterface
+interface ForwardInterface extends BaseSendInterface
 {
 
     public function getFromChatId();

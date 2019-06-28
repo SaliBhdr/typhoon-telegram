@@ -8,7 +8,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces;
 
 
-interface SendVideoInterface extends BaseSendMessageInterface
+interface SendVideoInterface extends BaseSendInterface
 {
     public function video($video);
     public function getVideo();

@@ -8,7 +8,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces;
 
 
-interface SendLocationInterface extends BaseSendMessageInterface
+interface SendLocationInterface extends BaseSendInterface
 {
 
     public function latitude(float $latitude);

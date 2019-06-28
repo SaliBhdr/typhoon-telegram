@@ -12,9 +12,9 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\RequestMethodInvalidException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Finals\ApiRequest;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseSendMessageInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseSendInterface;
 
-class SendDynamic extends SendAbstract implements BaseSendMessageInterface
+class SendDynamic extends SendAbstract implements BaseSendInterface
 {
     protected $method;
 

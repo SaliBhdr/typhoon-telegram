@@ -2,30 +2,32 @@
 
 namespace SaliBhdr\TyphoonTelegram\Laravel\Providers;
 
-use Illuminate\Contracts\Container\Container as Application;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
-use SaliBhdr\TyphoonTelegram\Telegram\Api;
 use SaliBhdr\TyphoonTelegram\Laravel\Commands\WebHookCommand;
+use SaliBhdr\TyphoonTelegram\Telegram\Api;
 
 /*** Class TelegramServiceProvider.
  */
-class TelegramServiceProvider extends ServiceProvider
+abstract class TelegramServiceProvider extends ServiceProvider
 {
-    /**    * Indicates if loading of the provider is deferred.
+    /**
+     * Indicates if loading of the provider is deferred.
      *
      * @var bool
      */
-    protected $defer = true;
+    protected $defer = TRUE;
 
-    /**    * Holds path to Config File.
+    /**
+     * Holds path to Config File.
      *
      * @var string
      */
     protected $config_filepath;
 
-    /**    * Bootstrap the application events.
+    /**
+     * Bootstrap the application events.
      */
     public function boot()
     {
@@ -33,63 +35,62 @@ class TelegramServiceProvider extends ServiceProvider
         $this->app->register('SaliBhdr\TyphoonTelegram\Providers\RouteServiceProvider');
     }
 
+    /**
+     * Register the service provider.
+     */
+    public function register()
+    {
+        $this->registerExceptionHandler();
+
+        $this->setupConfig();
+
+        $this->registerApi();
+    }
 
     /**
      * Setup the config.
      *
-     * @param \Illuminate\Contracts\Container\Container $app
-     *
      * @return void
      */
-    protected function setupConfig(Application $app)
+    protected function setupConfig()
     {
-        $source = $this->getConfigFile();
+        $this->addConfig();
 
-        $this->addConfig($source, $app);
-
-        $this->mergeConfigFrom($source, 'telegram');
+        $this->mergeConfigFrom($this->getConfigFile(), 'telegram');
     }
 
-    /**    * Register the service provider.
-     */
-    public function register()
-    {
-        $this->setupConfig($this->app);
-
-        $this->registerTelegram($this->app);
-    }
-
-    /**    * Initialize Telegram Bot SDK Library with Default Config.
+    /**
+     * Initialize Telegram Bot SDK Library with Default Config.
      *
-     * @param Application $app
      */
-    protected function registerTelegram(Application $app)
+    protected function registerApi()
     {
-        $app->singleton(Api::class, function ($app) {
+        $this->app->singleton(Api::class, function ($app) {
 
             $config = $app['config'];
 
             $telegram = Api::init(
-                $config->get('telegram.default_bot_token', false),
-                $config->get('telegram.async_requests', false),
-                $config->get('telegram.http_client_handler', null)
+                $config->get('telegram.default_bot_token', FALSE),
+                $config->get('telegram.async_requests', FALSE),
+                $config->get('telegram.http_client_handler', NULL)
             );
 
             // Register Commands
             $telegram->addCommands($config->get('telegram.commands', []));
 
             // Check if DI needs to be enabled for Commands
-            if ($config->get('telegram.inject_command_dependencies', false)) {
+            if ($config->get('telegram.inject_command_dependencies', FALSE)) {
                 $telegram->setContainer($app);
             }
 
             return $telegram;
         });
 
-        $app->alias(Api::class, 'telegram');
+        $this->app->alias(Api::class, 'telegram');
     }
 
-    /**    * Get the services provided by the provider.
+    /**
+     * Get the services provided by the provider.
      *
      * @return array
      */
@@ -105,19 +106,12 @@ class TelegramServiceProvider extends ServiceProvider
         ]);
     }
 
-    private function addConfig($source, Application $app)
-    {
-        if (class_exists('Illuminate\Foundation\Application') && $app instanceof LaravelApplication && $app->runningInConsole()) {
-            $this->publishes([$source => config_path('telegram.php')]);
-        } elseif (class_exists('Laravel\Lumen\Application') && $app instanceof LumenApplication) {
-            $app->configure('telegram');
-        }
-    }
+    protected abstract function addConfig();
 
-    private function getConfigFile()
+    protected abstract function registerExceptionHandler();
+
+    protected function getConfigFile()
     {
         return __DIR__ . '/../../config/telegram.php';
     }
-
-
 }

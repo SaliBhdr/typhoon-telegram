@@ -8,7 +8,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces;
 
 
-interface SendDocumentInterface extends BaseSendMessageInterface
+interface SendDocumentInterface extends BaseSendInterface
 {
 
     public function document($document);

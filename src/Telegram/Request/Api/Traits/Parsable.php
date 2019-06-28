@@ -16,7 +16,7 @@ trait Parsable
 
     public function htmlParsMode()
     {
-            $this->parsMode = Parse::HTML;
+        $this->parsMode = Parse::HTML;
     }
 
     public function markdownParseMode()
@@ -24,7 +24,7 @@ trait Parsable
         $this->parsMode = Parse::MARKDOWN;
     }
 
-    public function getParsMode(): ?string
+    public function getParsMode() : ?string
     {
         return $this->parsMode;
     }
