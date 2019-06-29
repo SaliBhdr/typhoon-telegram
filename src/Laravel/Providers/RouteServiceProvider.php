@@ -6,7 +6,7 @@
  * Time: 5:40 PM
  */
 
-namespace SaliBhdr\TyphoonTelegram\Laravel\Providers;
+namespace Salibhdr\TyphoonTelegram\Laravel\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
