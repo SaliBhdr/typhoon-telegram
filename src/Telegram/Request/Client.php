@@ -117,13 +117,7 @@ class Client
 
         $rawResponse = $this->httpClientHandler->send($url, $method, $headers, $options, $timeOut, $isAsyncRequest, $connectTimeOut);
 
-        $returnResponse = $this->getResponse($request, $rawResponse);
-
-        if ($returnResponse->isError()) {
-            throw $returnResponse->getThrownException();
-        }
-
-        return $returnResponse;
+        return $this->getResponse($request, $rawResponse);
     }
 
     /**

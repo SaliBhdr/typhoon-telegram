@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'http_client_handler' => null,
+    'http_client_handler' => \SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\GuzzleHttpClient::class,
 
     'guzzle' => [
         'ssl-certificate' => false,

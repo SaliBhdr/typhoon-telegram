@@ -9,18 +9,25 @@
 namespace SaliBhdr\TyphoonTelegram\Laravel\Exceptions;
 
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramParamsRequiredException;
+use SaliBhdr\TyphoonTelegram\Telegram\Response\Response;
 
 class LumenExceptionHandler extends ExceptionHandler
 {
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
+     * @param  \Illuminate\Http\Request $request
+     * @param \Exception $e
+     *
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
      */
-    public function render($request, \Exception $exception)
+    public function render($request, \Exception $e)
     {
-        return parent::render($request, $exception);
+if($e instanceof TelegramParamsRequiredException){
+    $response = new Response();
+    dd($e->getMessage());
+}
+        return parent::render($request, $e);
     }
 }

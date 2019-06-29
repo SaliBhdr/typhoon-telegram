@@ -2,11 +2,9 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Response;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramResponseException;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 
 /**
  * Class Response.
@@ -46,14 +44,9 @@ class Response
     protected $request;
 
     /**
-     * @var TelegramSDKException The exception thrown by this request.
-     */
-    protected $thrownException;
-
-    /**
      * Gets the relevant data from the Http client.
      *
-     * @param TelegramRequest                    $request
+     * @param TelegramRequest $request
      * @param ResponseInterface|PromiseInterface $response
      */
     public function __construct(TelegramRequest $request, $response)
@@ -65,7 +58,7 @@ class Response
 
             $this->decodeBody();
         } elseif ($response instanceof PromiseInterface) {
-            $this->httpStatusCode = null;
+            $this->httpStatusCode = NULL;
         } else {
             throw new \InvalidArgumentException(
                 'Second constructor argument "response" must be instance of ResponseInterface or PromiseInterface'
@@ -154,35 +147,7 @@ class Response
      */
     public function isError()
     {
-        return isset($this->decodedBody['ok']) && ($this->decodedBody['ok'] === false);
-    }
-
-    /**
-     * Throws the exception.
-     *
-     * @throws TelegramSDKException
-     */
-    public function throwException()
-    {
-        throw $this->thrownException;
-    }
-
-    /**
-     * Instantiates an exception to be thrown later.
-     */
-    public function makeException()
-    {
-        $this->thrownException = TelegramResponseException::create($this);
-    }
-
-    /**
-     * Returns the exception that was thrown for this request.
-     *
-     * @return TelegramSDKException
-     */
-    public function getThrownException()
-    {
-        return $this->thrownException;
+        return isset($this->decodedBody['ok']) && ($this->decodedBody['ok'] === FALSE);
     }
 
     /**
@@ -190,19 +155,15 @@ class Response
      */
     public function decodeBody()
     {
-        $this->decodedBody = json_decode($this->body, true);
+        $this->decodedBody = json_decode($this->body, TRUE);
 
-        if ($this->decodedBody === null) {
+        if ($this->decodedBody === NULL) {
             $this->decodedBody = [];
             parse_str($this->body, $this->decodedBody);
         }
 
         if (!is_array($this->decodedBody)) {
             $this->decodedBody = [];
-        }
-
-        if ($this->isError()) {
-            $this->makeException();
         }
     }
 }

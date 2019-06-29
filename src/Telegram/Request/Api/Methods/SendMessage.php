@@ -91,6 +91,7 @@ class SendMessage extends SendAbstract implements SendInterface
 
     protected function requiredParams(): array
     {
+//        return [];
         return ['chat_id', 'text'];
     }
 }

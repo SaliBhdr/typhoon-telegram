@@ -118,13 +118,21 @@ class Api
      */
     private function __construct(string $token = NULL, bool $async = FALSE, $http_client_handler = NULL)
     {
-        if (!isset($http_client_handler)) {
-            $http_client_handler = new HttpClient();
-        }
-
         $this->accessToken = isset($token) ? $token : getenv(static::BOT_TOKEN_ENV_NAME);
         if (!$this->accessToken) {
             throw new TelegramSDKException('Required "token" not supplied in config and could not find fallback environment variable "' . static::BOT_TOKEN_ENV_NAME . '"');
+        }
+
+        if (isset($async)) {
+            $this->setAsyncRequest($async);
+        }
+
+        $this->client = new TelegramClient($this->getHttpClientHandler($http_client_handler));
+    }
+
+    protected function getHttpClientHandler($http_client_handler){
+        if (!isset($http_client_handler)) {
+            $http_client_handler = new HttpClient();
         }
 
         $httpClientHandler = null;
@@ -138,11 +146,7 @@ class Api
             }
         }
 
-        if (isset($async)) {
-            $this->setAsyncRequest($async);
-        }
-
-        $this->client = new TelegramClient($httpClientHandler);
+        return $httpClientHandler;
     }
 
     /**
@@ -1328,6 +1332,7 @@ class Api
      * @param array $params
      *
      * @return TelegramResponse
+     * @throws TelegramSDKException
      */
     protected function sendRequest(
         $method,
@@ -1381,7 +1386,7 @@ class Api
         if ($action === 'get') {
             /* @noinspection PhpUndefinedFunctionInspection */
             $class_name = Str::studly(substr($method, 3));
-            $class = 'SaliBhdr\TyphoonTelegram\Objects\\' . $class_name;
+            $class = 'SaliBhdr\TyphoonTelegram\Telegram\Response\Models\\' . $class_name;
             $response = $this->post($method, $arguments[0] ?: []);
 
             if (class_exists($class)) {

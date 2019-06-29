@@ -12,7 +12,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
 
 /*** Class GuzzleHttpClient.
  */
-class GuzzleHttpClient
+class GuzzleHttpClient implements HttpClientInterface
 {
     /**
      * HTTP client.
