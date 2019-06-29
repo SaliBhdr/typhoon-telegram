@@ -6,7 +6,7 @@
  * Time: 1:13 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Laravel\Providers;
+namespace SaliBhdr\TyphoonTelegram\Laravel\Providers;
 
 use Illuminate\Foundation\Application as LaravelApplication;
 
@@ -24,7 +24,7 @@ class TelegramLaravelServiceProvider extends TelegramServiceProvider
     {
         $this->app->singleton(
             \Illuminate\Contracts\Debug\ExceptionHandler::class,
-            \Salibhdr\TyphoonTelegram\Laravel\Exceptions\LaravelExceptionHandler::class
+            \SaliBhdr\TyphoonTelegram\Laravel\Exceptions\LaravelExceptionHandler::class
         );
     }
 }

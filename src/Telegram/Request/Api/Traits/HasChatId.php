@@ -6,7 +6,7 @@
  * Time: 12:57 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Telegram\Request\Api\Traits;
+namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits;
 
 
 trait HasChatId

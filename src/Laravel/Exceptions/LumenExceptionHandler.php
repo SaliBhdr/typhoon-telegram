@@ -6,7 +6,7 @@
  * Time: 1:29 PM
  */
 
-namespace Salibhdr\TyphoonTelegram\Laravel\Exceptions;
+namespace SaliBhdr\TyphoonTelegram\Laravel\Exceptions;
 
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 
