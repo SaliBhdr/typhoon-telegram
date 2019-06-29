@@ -2,20 +2,20 @@
 /**
  * Created by PhpStorm.
  * User: s.bahador
- * Date: 6/28/2019
- * Time: 12:57 PM
+ * Date: 6/30/2019
+ * Time: 1:38 AM
  */
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits;
 
 
-trait HasChatId
+trait HasVoice
 {
-    protected $chatId;
+    protected $voice;
 
-    public function chatId($chatId)
+    public function voice($voice)
     {
-        $this->chatId = $chatId;
+        $this->voice = $voice;
 
         return $this;
     }

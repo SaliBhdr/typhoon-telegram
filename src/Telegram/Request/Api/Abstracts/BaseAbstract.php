@@ -7,16 +7,17 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts;
 
+use Illuminate\Support\Collection;
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramParamsRequiredException;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Message;
 
-abstract class BaseAbstract implements BaseInterface
+abstract class BaseAbstract
 {
 
     protected $chatId;
 
-    protected $paramsIsSetManually = FALSE;
+    protected $paramsIsSetManually = false;
 
     protected $params = [];
 
@@ -25,7 +26,7 @@ abstract class BaseAbstract implements BaseInterface
 
     protected $botName;
 
-    abstract protected function addParams() : void;
+    abstract protected function getRequiredParams() : array;
 
     abstract protected function addOptionalParams() : void;
 
@@ -44,7 +45,7 @@ abstract class BaseAbstract implements BaseInterface
     {
         $this->params = $params;
 
-        $this->paramsIsSetManually = TRUE;
+        $this->paramsIsSetManually = true;
 
         return $this;
     }
@@ -85,7 +86,7 @@ abstract class BaseAbstract implements BaseInterface
     {
         if (!$this->isParamsSetManually()) {
 
-            $this->addParams();
+            $this->params = $this->getRequiredParams();
             $this->addOptionalParams();
         }
 
@@ -96,19 +97,10 @@ abstract class BaseAbstract implements BaseInterface
         return $this->params;
     }
 
-    public function extraParam(string $name, $value)
+    protected function addParam(string $name, $value)
     {
         if (!is_null($value) && !array_key_exists($name, $this->params))
             $this->params[$name] = $value;
-
-        return $this;
-    }
-
-    public function extraParams(array $extraParams)
-    {
-        if (!empty($extraParams))
-            $this->params = array_merge($extraParams, $this->params);
-
 
         return $this;
     }
@@ -148,11 +140,11 @@ abstract class BaseAbstract implements BaseInterface
     }
 
     /**
-     * @return mixed
+     * @return Collection
      * @throws TelegramParamsRequiredException
      * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
      */
-    public function send()
+    public function send() : Message
     {
         return $this->selectBot()->send($this);
     }
@@ -163,10 +155,12 @@ abstract class BaseAbstract implements BaseInterface
     private function selectBot()
     {
         if (is_null($this->botName))
-            $this->apiInstance->setAccessToken(config('telegram.default_bot_token', FALSE));
+            $this->apiInstance->setAccessToken(config('telegram.default_bot_token', false));
         else
             $this->apiInstance->bot($this->botName);
 
         return $this->apiInstance;
     }
+
+    abstract public function method();
 }

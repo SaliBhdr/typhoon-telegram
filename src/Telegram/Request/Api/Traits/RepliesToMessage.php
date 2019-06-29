@@ -18,8 +18,4 @@ trait RepliesToMessage
         return $this;
     }
 
-    public function getReplyToMessageId(): ?int
-    {
-        return $this->replyToMessageId;
-    }
 }

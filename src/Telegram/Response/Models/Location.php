@@ -9,7 +9,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method float    getLongitude()  Longitude as defined by sender.
  * @method float    getLatitude()   Latitude as defined by sender.
  */
-class Location extends BaseObject
+class Location extends BaseModel
 {
     /**
      * {@inheritdoc}

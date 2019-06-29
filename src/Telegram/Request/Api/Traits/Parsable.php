@@ -24,8 +24,4 @@ trait Parsable
         $this->parsMode = Parse::MARKDOWN;
     }
 
-    public function getParsMode() : ?string
-    {
-        return $this->parsMode;
-    }
 }

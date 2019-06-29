@@ -8,74 +8,46 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\SendPhotoInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Captionable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasPhoto;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
 
-class SendPhoto extends SendAbstract implements SendPhotoInterface
+class SendPhoto extends SendAbstract
 {
-    use HasReplyMarkUp,
+    use HasPhoto,
+        HasReplyMarkUp,
         DisablesNotification,
         Parsable,
         RepliesToMessage,
         Captionable;
 
-    protected $photo;
-
-    protected function addParams(): void
-    {
-        $this->params = [
-            'chat_id' => $this->getChatId(),
-            'photo'   => $this->getPhoto(),
-        ];
-    }
-
-    protected function addOptionalParams(): void
-    {
-        if (!is_null($this->getCaption())) {
-            $this->params['caption'] = $this->getCaption();
-        }
-
-        if (!is_null($this->getParsMode())) {
-            $this->params['parse_mode'] = $this->getParsMode();
-        }
-
-        if (!is_null($this->isNotificationDisabled())) {
-            $this->params['disable_notification'] = $this->isNotificationDisabled();
-        }
-
-        if (!is_null($this->getReplyToMessageId())) {
-            $this->params['reply_to_message_id'] = $this->getReplyToMessageId();
-        }
-
-        if (!is_null($this->getReplyMarkup())) {
-            $this->params['reply_markup'] = $this->getReplyMarkup();
-        }
-    }
-
-    public function method(): string
+    public function method() : string
     {
         return 'sendPhoto';
     }
 
-    protected function requiredParams(): array
+    protected function getRequiredParams() : array
+    {
+        return [
+            'chat_id' => $this->chatId,
+            'photo'   => $this->photo,
+        ];
+    }
+
+    protected function addOptionalParams() : void
+    {
+        $this->addParam('caption', $this->caption);
+        $this->addParam('parse_mode', $this->parsMode);
+        $this->addParam('disable_notification', $this->disableNotification);
+        $this->addParam('reply_to_message_id', $this->replyToMessageId);
+        $this->addParam('reply_markup', $this->replyMarkup);
+    }
+
+    protected function requiredParams() : array
     {
         return ['chat_id', 'photo'];
     }
-
-    public function photo($photo)
-    {
-        $this->photo = $photo;
-
-        return $this;
-    }
-
-    public function getPhoto()
-    {
-        return $this->photo;
-    }
-
 }

@@ -8,6 +8,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Commands\CommandBus;
 use SaliBhdr\TyphoonTelegram\Telegram\Commands\CommandInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\InvalidChatActionException;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\BaseAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods\GetMe;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods\SendDynamic;
@@ -189,7 +190,7 @@ class Api
      * @throws Exceptions\TelegramParamsRequiredException
      */
 
-    public function send(BaseInterface $apiMethodObj)
+    public function send(BaseAbstract $apiMethodObj)
     {
 
         if ($apiMethodObj instanceof SendDynamic) {

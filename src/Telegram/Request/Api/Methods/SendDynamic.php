@@ -8,13 +8,11 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\RequestMethodInvalidException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Finals\ApiRequest;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseSendInterface;
 
-class SendDynamic extends SendAbstract implements BaseSendInterface
+class SendDynamic extends SendAbstract
 {
     protected $method;
 
@@ -22,9 +20,12 @@ class SendDynamic extends SendAbstract implements BaseSendInterface
 
     /**
      * Send constructor.
+     *
      * @param $requestMethod
      * @param $method
+     *
      * @throws RequestMethodInvalidException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
      */
     public function __construct($requestMethod, $method)
     {
@@ -34,6 +35,8 @@ class SendDynamic extends SendAbstract implements BaseSendInterface
         $this->method = $method;
 
         $this->requestMethod = $requestMethod;
+
+        parent::__construct();
     }
 
     /**
@@ -44,16 +47,22 @@ class SendDynamic extends SendAbstract implements BaseSendInterface
         return $this->requestMethod;
     }
 
-    protected function addParams(): void {}
+    protected function getRequiredParams() : array
+    {
+        return [];
+    }
 
-    protected function addOptionalParams(): void {}
+    protected function addOptionalParams() : void
+    {
+        return;
+    }
 
-    public function method(): string
+    public function method() : string
     {
         return $this->method;
     }
 
-    protected function requiredParams(): array
+    protected function requiredParams() : array
     {
         return [];
     }

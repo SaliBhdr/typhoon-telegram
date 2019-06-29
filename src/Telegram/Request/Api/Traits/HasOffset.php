@@ -2,22 +2,21 @@
 /**
  * Created by PhpStorm.
  * User: s.bahador
- * Date: 6/28/2019
- * Time: 12:57 PM
+ * Date: 6/30/2019
+ * Time: 1:10 AM
  */
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits;
 
 
-trait HasChatId
+trait HasOffset
 {
-    protected $chatId;
+    protected $offset;
 
-    public function chatId($chatId)
+    public function offset(int $offset)
     {
-        $this->chatId = $chatId;
+        $this->offset = $offset;
 
         return $this;
     }
-
 }

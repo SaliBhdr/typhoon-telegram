@@ -2,22 +2,22 @@
 /**
  * Created by PhpStorm.
  * User: s.bahador
- * Date: 6/28/2019
- * Time: 12:57 PM
+ * Date: 6/30/2019
+ * Time: 1:37 AM
  */
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits;
 
 
-trait HasChatId
+trait HasVideo
 {
-    protected $chatId;
+    protected $video;
 
-    public function chatId($chatId)
+
+    public function video($video)
     {
-        $this->chatId = $chatId;
+        $this->video = $video;
 
         return $this;
     }
-
 }

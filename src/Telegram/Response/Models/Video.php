@@ -14,7 +14,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method string       getMimeType()   (Optional). Mime type of a file as defined by sender.
  * @method int          getFileSize()   (Optional). File size.
  */
-class Video extends BaseObject
+class Video extends BaseModel
 {
     /**
      * {@inheritdoc}

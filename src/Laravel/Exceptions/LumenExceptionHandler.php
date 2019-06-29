@@ -24,10 +24,6 @@ class LumenExceptionHandler extends ExceptionHandler
      */
     public function render($request, \Exception $e)
     {
-if($e instanceof TelegramParamsRequiredException){
-    $response = new Response();
-    dd($e->getMessage());
-}
         return parent::render($request, $e);
     }
 }

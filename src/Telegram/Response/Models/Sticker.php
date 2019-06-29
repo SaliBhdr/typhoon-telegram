@@ -12,7 +12,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method PhotoSize    getThumb()      (Optional). Sticker thumbnail in .webp or .jpg format.
  * @method int          getFileSize()   (Optional). File size.
  */
-class Sticker extends BaseObject
+class Sticker extends BaseModel
 {
     /**
      * {@inheritdoc}

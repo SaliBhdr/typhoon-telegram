@@ -7,12 +7,9 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseSendInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasChatId;
 
-abstract class SendAbstract extends BaseAbstract implements BaseSendInterface
+abstract class SendAbstract extends BaseAbstract
 {
-
     use HasChatId;
-
 }

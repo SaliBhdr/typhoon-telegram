@@ -34,7 +34,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method int              getMigrateToChatId()        (Optional). The group has been migrated to a supergroup with the specified identifier, not exceeding 1e13 by absolute value.
  * @method int              getMigrateFromChatId()      (Optional). The supergroup has been migrated from a group with the specified identifier, not exceeding 1e13 by absolute value.
  */
-class Message extends BaseObject
+class Message extends BaseModel
 {
     /**
      * {@inheritdoc}

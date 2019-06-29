@@ -8,86 +8,44 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\ProfilePhotoLimitRangeException;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\GetAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\GetUserProfilePhotosInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\BaseAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasOffset;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasUserId;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Limitable;
 
-class GetUserProfilePhotos extends GetAbstract implements GetUserProfilePhotosInterface
+
+class GetUserProfilePhotos extends BaseAbstract
 {
 
-    protected $userId;
-
-    protected $limit;
-
-    protected $offset;
+    use HasUserId,
+        Limitable,
+        HasOffset;
 
     protected const minLimit = 1;
 
     protected const maxLimit = 100;
 
-    public function method(): string
+    public function method() : string
     {
         return 'getUserProfilePhotos';
     }
 
-    protected function addParams(): void
+    protected function getRequiredParams() : array
     {
-        $this->params = [
-            'user_id' => $this->getUserId(),
+        return [
+            'user_id' => $this->userId,
         ];
     }
 
-    protected function addOptionalParams(): void
+    protected function addOptionalParams() : void
     {
-        if (!is_null($this->getLimit())) {
-            $this->params['limit'] = $this->getLimit();
-        }
-
-        if (!is_null($this->getOffset())) {
-            $this->params['offset'] = $this->getOffset();
-        }
+        $this->addParam('limit', $this->limit);
+        $this->addParam('offset', $this->offset);
     }
 
-    protected function requiredParams(): array
+    protected function requiredParams() : array
     {
         return ['user_id'];
-    }
-
-
-    public function offset(int $offset)
-    {
-        $this->offset = $offset;
-
-        return $this;
-    }
-
-    public function getOffset(): ?int
-    {
-        return $this->offset;
-    }
-
-    public function limit(int $limit)
-    {
-        if ($limit >= static::minLimit && $limit <= static::maxLimit)
-            $this->limit = $limit;
-
-        return $this;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function userId(int $userId)
-    {
-        $this->userId = $userId;
-
-        return $this;
-    }
-
-    public function getUserId(): ?int
-    {
-        return $this->userId;
     }
 
     /**
@@ -98,4 +56,5 @@ class GetUserProfilePhotos extends GetAbstract implements GetUserProfilePhotosIn
         if (!is_null($this->limit) && !($this->limit >= static::minLimit && $this->limit <= static::maxLimit))
             throw new ProfilePhotoLimitRangeException(static::minLimit, static::maxLimit);
     }
+
 }

@@ -10,8 +10,6 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits;
 trait HasReplyMarkUp
 {
 
-    protected $parsMode;
-    
     protected $replyMarkup;
 
     public function replyMarkup(array $replyMarkup)
@@ -19,10 +17,5 @@ trait HasReplyMarkUp
         $this->replyMarkup = $replyMarkup;
 
         return $this;
-    }
-
-    public function getReplyMarkup(): ?string
-    {
-        return $this->replyMarkup;
     }
 }

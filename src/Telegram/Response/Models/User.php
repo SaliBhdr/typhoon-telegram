@@ -11,7 +11,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method string   getLastName()   (Optional). User's or bot's last name.
  * @method string   getUsername()   (Optional). User's or bot's username.
  */
-class User extends BaseObject
+class User extends BaseModel
 {
     /**
      * {@inheritdoc}

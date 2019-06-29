@@ -9,74 +9,36 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\ForwardInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasMessageForward;
 
-class FrowardMessage extends SendAbstract implements ForwardInterface
+class FrowardMessage extends SendAbstract
 {
-    use DisablesNotification;
-
-    protected $fromChatId;
-
-    protected $messageId;
-
-
-    public function fromChatId($fromChatId): FrowardMessage
-    {
-        $this->fromChatId = $fromChatId;
-
-        return $this;
-    }
-
-    /**    * @return mixed
-     */
-    public function getFromChatId()
-    {
-        return $this->fromChatId;
-    }
-
-    /**    * @param mixed $messageId
-     * @return FrowardMessage
-     */
-    public function messageId($messageId)
-    {
-        $this->messageId = $messageId;
-
-        return $this;
-    }
-
-    /**    * @return mixed
-     */
-    public function getMessageId()
-    {
-        return $this->messageId;
-    }
-
-    protected function addParams() :void
-    {
-        $this->params = [
-            'chat_id' => $this->getChatId(),
-            'from_chat_id' => $this->getFromChatId(),
-            'message_id' => $this->getMessageId(),
-        ];
-    }
-
-    protected function addOptionalParams():void
-    {
-        if (!is_null($this->isNotificationDisabled())) {
-            $this->params['disable_notification'] = $this->isNotificationDisabled();
-        }
-    }
-
+    use HasMessageForward,
+        DisablesNotification;
 
     public function method() : string
     {
         return 'forwardMessage';
     }
 
-    protected function requiredParams(): array
+    protected function getRequiredParams() : array
     {
-        return ['chat_id','from_chat_id','message_id'];
+        return [
+            'chat_id'      => $this->chatId,
+            'from_chat_id' => $this->fromChatId,
+            'message_id'   => $this->messageId,
+        ];
+    }
+
+    protected function addOptionalParams() : void
+    {
+        $this->addParam('disable_notification', $this->disableNotification);
+    }
+
+    protected function requiredParams() : array
+    {
+        return ['chat_id', 'from_chat_id', 'message_id'];
     }
 
 }

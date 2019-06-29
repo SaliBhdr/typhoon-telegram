@@ -11,7 +11,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method int      getHeight()     Photo height.
  * @method int      getFileSize()   (Optional). File size.
  */
-class PhotoSize extends BaseObject
+class PhotoSize extends BaseModel
 {
     /**
      * {@inheritdoc}

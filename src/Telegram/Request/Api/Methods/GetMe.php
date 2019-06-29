@@ -7,17 +7,27 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Laravel\Facades\Telegram;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\BaseAbstract;
 
-class GetMe
+class GetMe extends BaseAbstract
 {
     public function method() : string
     {
         return 'getMe';
     }
 
-    public function send()
+    protected function getRequiredParams() : array
     {
-        return Telegram::getMe();
+        return [];
+    }
+
+    protected function addOptionalParams() : void
+    {
+        return;
+    }
+
+    protected function requiredParams() : array
+    {
+        return [];
     }
 }
