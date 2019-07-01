@@ -73,16 +73,16 @@ class GuzzleHttpClient implements HttpClientInterface
 
         $proxy = '';
 
-        if (isset($httpProxy['username']) && $httpProxy['username'])
+        if (isset($httpProxy['username']) && !empty($httpProxy['username']))
             $proxy .= "{$httpProxy['username']}";
 
-        if (isset($httpProxy['password']) && $httpProxy['password'])
+        if (isset($httpProxy['password']) && !empty($httpProxy['password']))
             $proxy .= ":{$httpProxy['password']}";
 
         if ($proxy)
             $proxy .= "@";
 
-        if (isset($httpProxy['ip']) && isset($httpProxy['port']) && $httpProxy['ip'] && $httpProxy['port'])
+        if (isset($httpProxy['ip']) && isset($httpProxy['port']) && !empty($httpProxy['ip']) && !empty($httpProxy['port']))
             $proxy = "{$proxy}{$httpProxy['ip']}:{$httpProxy['port']}";
 
         if ($proxy)
