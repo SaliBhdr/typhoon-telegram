@@ -7,9 +7,9 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\BaseAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract;
 
-class GetMe extends BaseAbstract
+class GetMe extends MethodAbstract
 {
     public function method() : string
     {

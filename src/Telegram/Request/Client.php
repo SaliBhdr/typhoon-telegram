@@ -4,10 +4,11 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request;
 
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\GuzzleHttpClient;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\HttpClientInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Response as TelegramResponse;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 
 /**
  * Class Client.
@@ -77,11 +78,11 @@ class Client
     /**
      * Prepares the API request for sending to the client handler.
      *
-     * @param Request $request
+     * @param TelegramRequest $request
      *
      * @return array
      */
-    public function prepareRequest(Request $request)
+    public function prepareRequest(TelegramRequest $request)
     {
         $url = $this->getBaseBotUrl().$request->getAccessToken().'/'.$request->getEndpoint();
 
@@ -96,9 +97,9 @@ class Client
     /**
      * Send an API request and process the result.
      *
-     * @param Request $request
+     * @param TelegramRequest $request
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return TelegramResponse
      */

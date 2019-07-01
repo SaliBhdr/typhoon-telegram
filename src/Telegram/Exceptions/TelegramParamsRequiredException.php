@@ -7,7 +7,7 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Exceptions;
 
-class TelegramParamsRequiredException extends TelegramSDKException
+class TelegramParamsRequiredException extends TelegramException
 {
     public function __construct(array $requiredParams)
     {

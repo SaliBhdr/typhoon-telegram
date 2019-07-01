@@ -9,10 +9,10 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\RequestMethodInvalidException;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Finals\ApiRequest;
 
-class SendDynamic extends SendAbstract
+class SendMethodDynamic extends SendMethodAbstract
 {
     protected $method;
 
@@ -25,7 +25,7 @@ class SendDynamic extends SendAbstract
      * @param $method
      *
      * @throws RequestMethodInvalidException
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     public function __construct($requestMethod, $method)
     {

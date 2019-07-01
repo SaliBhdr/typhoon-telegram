@@ -9,10 +9,10 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\InvalidChatActionException;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasChatAction;
 
-class SendChatAction extends SendAbstract
+class SendMethodChatAction extends SendMethodAbstract
 {
 
     use HasChatAction;

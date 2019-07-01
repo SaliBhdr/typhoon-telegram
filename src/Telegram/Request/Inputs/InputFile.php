@@ -3,7 +3,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Inputs;
 
 use GuzzleHttp\Psr7;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 
 /**
  * Class InputFile.
@@ -25,7 +25,7 @@ class InputFile
      *
      * @param string $filePath
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function __construct($filePath)
     {
@@ -45,7 +45,7 @@ class InputFile
     /**
      * Opens file stream.
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return resource
      */
@@ -56,7 +56,7 @@ class InputFile
         }
 
         if (!$this->isRemoteFile() && !is_readable($this->path)) {
-            throw new TelegramSDKException('Failed to create InputFile entity. Unable to read resource: '.$this->path.'.');
+            throw new TelegramException('Failed to create InputFile entity. Unable to read resource: '.$this->path.'.');
         }
 
         return Psr7\try_fopen($this->path, 'r');

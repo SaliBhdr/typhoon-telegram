@@ -13,7 +13,7 @@ abstract class TelegramServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = TRUE;
+    protected $defer = true;
 
     /**
      * Bootstrap the application events.
@@ -35,6 +35,7 @@ abstract class TelegramServiceProvider extends ServiceProvider
         $this->setupConfig();
 
         $this->bindMainClass();
+
     }
 
     /**
@@ -57,19 +58,17 @@ abstract class TelegramServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Api::class, function ($app) {
 
-            $config = $app['config'];
-
             $telegram = Api::init(
-                $config->get('telegram.default_bot_token', FALSE),
-                $config->get('telegram.async_requests', FALSE),
-                $config->get('telegram.http_client_handler', NULL)
+                $app['config']->get('telegram.default_bot_token', null),
+                $app['config']->get('telegram.async_requests', false),
+                $app['config']->get('telegram.http_client_handler', null)
             );
 
             // Register Commands
-            $telegram->addCommands($config->get('telegram.commands', []));
+            $telegram->addCommands($app['config']->get('telegram.commands', []));
 
             // Check if DI needs to be enabled for Commands
-            if ($config->get('telegram.inject_command_dependencies', FALSE)) {
+            if ($app['config']->get('telegram.inject_command_dependencies', false)) {
                 $telegram->setContainer($app);
             }
 

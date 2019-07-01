@@ -7,11 +7,11 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\BaseAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasFile;
 
 
-class GetFile extends BaseAbstract
+class GetFile extends MethodAbstract
 {
 
     use HasFile;

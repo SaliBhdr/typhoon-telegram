@@ -6,60 +6,61 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Captionable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasAudio;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDimensions;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDuration;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasPerformer;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasThumbnail;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasTitle;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasVideo;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Streamable;
 
-class SendAudio extends SendAbstract
+class SendMethodVideo extends SendMethodAbstract
 {
-    use HasAudio,
-        HasPerformer,
-        HasTitle,
+    use HasVideo,
+        Streamable,
         HasReplyMarkUp,
         DisablesNotification,
         Parsable,
         RepliesToMessage,
         Captionable,
         HasDuration,
-        HasThumbnail;
+        HasThumbnail,
+        HasDimensions;
+
 
     public function method() : string
     {
-        return 'sendAudio';
+        return 'sendVideo';
     }
 
     protected function getRequiredParams() : array
     {
         return [
             'chat_id' => $this->chatId,
-            'audio'   => $this->audio,
+            'video'   => $this->video
         ];
     }
 
     protected function addOptionalParams() : void
     {
+        $this->addParam('caption', $this->caption);
+        $this->addParam('duration', $this->duration);
+        $this->addParam('height', $this->height);
+        $this->addParam('width', $this->width);
+        $this->addParam('supports_streaming', $this->supportStreaming);
         $this->addParam('parse_mode', $this->parsMode);
         $this->addParam('disable_notification', $this->disableNotification);
         $this->addParam('reply_to_message_id', $this->replyToMessageId);
         $this->addParam('reply_markup', $this->replyMarkup);
-        $this->addParam('caption', $this->caption);
-        $this->addParam('duration', $this->duration);
-        $this->addParam('thumb', $this->thumbnail);
-        $this->addParam('title', $this->title);
-        $this->addParam('performer', $this->performer);
-
     }
 
     protected function requiredParams() : array
     {
-        return ['chat_id', 'audio'];
+        return ['chat_id', 'video'];
     }
+
 }

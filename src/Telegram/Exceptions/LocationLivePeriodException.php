@@ -8,7 +8,7 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Exceptions;
 
-class LocationLivePeriodException extends TelegramSDKException
+class LocationLivePeriodException extends TelegramException
 {
     public function __construct($min, $max)
     {

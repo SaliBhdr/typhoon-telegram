@@ -12,7 +12,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Api;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramParamsRequiredException;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Message;
 
-abstract class BaseAbstract
+abstract class MethodAbstract
 {
 
     protected $chatId;
@@ -34,7 +34,7 @@ abstract class BaseAbstract
 
     /**
      * BaseAbstract constructor.
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     public function __construct()
     {
@@ -111,7 +111,7 @@ abstract class BaseAbstract
      * @param  array $parameters
      *
      * @return mixed
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     public static function __callStatic($method, $parameters)
     {
@@ -121,7 +121,7 @@ abstract class BaseAbstract
     /**
      * @param string $botName
      *
-     * @return BaseAbstract
+     * @return MethodAbstract
      */
     public function bot(string $botName)
     {
@@ -132,17 +132,18 @@ abstract class BaseAbstract
 
 
     /**
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     protected function setApiInstance()
     {
         $this->apiInstance = Api::init();
+        $this->apiInstance->makeRequestInstance('POST',$this->method(),$this->params);
     }
 
     /**
      * @return Collection
      * @throws TelegramParamsRequiredException
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     public function send() : Message
     {

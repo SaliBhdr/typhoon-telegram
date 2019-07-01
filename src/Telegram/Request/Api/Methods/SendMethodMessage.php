@@ -7,7 +7,7 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesWebPagePreview;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
@@ -15,7 +15,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasText;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
 
-class SendMessage extends SendAbstract
+class SendMethodMessage extends SendMethodAbstract
 {
     use DisablesWebPagePreview,
         HasText,
@@ -48,6 +48,7 @@ class SendMessage extends SendAbstract
 
     protected function requiredParams() : array
     {
+//        return [];
         return ['chat_id', 'text'];
     }
 }

@@ -8,11 +8,11 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasMessageForward;
 
-class FrowardMessage extends SendAbstract
+class FrowardMessage extends SendMethodAbstract
 {
     use HasMessageForward,
         DisablesNotification;

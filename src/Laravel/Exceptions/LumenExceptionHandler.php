@@ -9,8 +9,8 @@
 namespace SaliBhdr\TyphoonTelegram\Laravel\Exceptions;
 
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramParamsRequiredException;
-use SaliBhdr\TyphoonTelegram\Telegram\Response\Response;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TokenNotProvidedException;
 
 class LumenExceptionHandler extends ExceptionHandler
 {
@@ -21,9 +21,13 @@ class LumenExceptionHandler extends ExceptionHandler
      * @param \Exception $e
      *
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @throws TelegramException
      */
     public function render($request, \Exception $e)
     {
+        if ($e instanceof TelegramException && !$e instanceof TokenNotProvidedException)
+            return Handler::init($request, $e)->render();
+
         return parent::render($request, $e);
     }
 }

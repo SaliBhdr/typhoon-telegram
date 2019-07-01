@@ -111,7 +111,7 @@ class WebHookCommand extends Command
      * @param $token
      *
      * @return array|mixed
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     private function setWebHook()
     {
@@ -183,7 +183,7 @@ class WebHookCommand extends Command
      * @param $botName
      * @param $setting
      *
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     private function initWebHook($row)
     {

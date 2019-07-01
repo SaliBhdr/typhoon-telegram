@@ -3,7 +3,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Commands;
 
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
 
 /**
@@ -63,7 +63,7 @@ class CommandBus
      *
      * @param CommandInterface|string $command Either an object or full path to the command class.
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return CommandBus
      */
@@ -71,7 +71,7 @@ class CommandBus
     {
         if (!is_object($command)) {
             if (!class_exists($command)) {
-                throw new TelegramSDKException(
+                throw new TelegramException(
                     sprintf(
                         'Command class "%s" not found! Please make sure the class exists.',
                         $command
@@ -98,7 +98,7 @@ class CommandBus
             return $this;
         }
 
-        throw new TelegramSDKException(
+        throw new TelegramException(
             sprintf(
                 'Command class "%s" should be an instance of "SaliBhdr\TyphoonTelegram\Commands\CommandInterface"',
                 get_class($command)
@@ -142,7 +142,7 @@ class CommandBus
      * @param $message
      * @param $update
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return Update
      */

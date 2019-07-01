@@ -8,7 +8,7 @@ use GuzzleHttp\Promise;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 
 /*** Class GuzzleHttpClient.
  */
@@ -130,7 +130,7 @@ class GuzzleHttpClient implements HttpClientInterface
 
     /**
      * {@inheritdoc}
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function send(
         $url,
@@ -159,7 +159,7 @@ class GuzzleHttpClient implements HttpClientInterface
             $response = $e->getResponse();
 
             if (!$response instanceof ResponseInterface) {
-                throw new TelegramSDKException($e->getMessage(), $e->getCode());
+                throw new TelegramException($e->getMessage(), $e->getCode());
             }
         }
 

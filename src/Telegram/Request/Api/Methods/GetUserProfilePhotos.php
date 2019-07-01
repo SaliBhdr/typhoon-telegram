@@ -8,13 +8,13 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\ProfilePhotoLimitRangeException;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\BaseAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasOffset;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasUserId;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Limitable;
 
 
-class GetUserProfilePhotos extends BaseAbstract
+class GetUserProfilePhotos extends MethodAbstract
 {
 
     use HasUserId,

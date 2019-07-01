@@ -8,7 +8,7 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Exceptions;
 
-class ProfilePhotoLimitRangeException extends TelegramSDKException
+class ProfilePhotoLimitRangeException extends TelegramException
 {
     public function __construct($min, $max)
     {

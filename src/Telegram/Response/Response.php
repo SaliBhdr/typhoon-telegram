@@ -3,6 +3,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Response;
 
 use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Http\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 
@@ -11,7 +12,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
  *
  * Handles the response from Telegram API.
  */
-class Response
+class Response extends JsonResponse
 {
     /**
      * @var null|int The HTTP status code response from API.
@@ -21,7 +22,7 @@ class Response
     /**
      * @var array The headers returned from API request.
      */
-    protected $headers;
+    public $headers;
 
     /**
      * @var string The raw body of the response from API request.
@@ -47,18 +48,18 @@ class Response
      * Gets the relevant data from the Http client.
      *
      * @param TelegramRequest $request
-     * @param ResponseInterface|PromiseInterface $response
+     * @param ResponseInterface|PromiseInterface|CustomResponse $response
      */
     public function __construct(TelegramRequest $request, $response)
     {
-        if ($response instanceof ResponseInterface) {
+        if ($response instanceof ResponseInterface || $response instanceof CustomResponse) {
             $this->httpStatusCode = $response->getStatusCode();
             $this->body = $response->getBody();
             $this->headers = $response->getHeaders();
 
             $this->decodeBody();
         } elseif ($response instanceof PromiseInterface) {
-            $this->httpStatusCode = NULL;
+            $this->httpStatusCode = null;
         } else {
             throw new \InvalidArgumentException(
                 'Second constructor argument "response" must be instance of ResponseInterface or PromiseInterface'
@@ -67,6 +68,8 @@ class Response
 
         $this->request = $request;
         $this->endPoint = (string) $request->getEndpoint();
+
+        parent::__construct($this->getDecodedBody(), $response->getStatusCode(), $response->getHeaders());
     }
 
     /**
@@ -147,7 +150,7 @@ class Response
      */
     public function isError()
     {
-        return isset($this->decodedBody['ok']) && ($this->decodedBody['ok'] === FALSE);
+        return isset($this->decodedBody['ok']) && ($this->decodedBody['ok'] === false);
     }
 
     /**
@@ -155,9 +158,9 @@ class Response
      */
     public function decodeBody()
     {
-        $this->decodedBody = json_decode($this->body, TRUE);
+        $this->decodedBody = json_decode($this->body, true);
 
-        if ($this->decodedBody === NULL) {
+        if ($this->decodedBody === null) {
             $this->decodedBody = [];
             parse_str($this->body, $this->decodedBody);
         }

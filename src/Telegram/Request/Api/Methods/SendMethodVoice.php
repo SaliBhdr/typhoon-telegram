@@ -1,47 +1,41 @@
 <?php
-/*** User: Salar Bahador
+/**
+ * User: Salar Bahador
  * Date: 4/26/2019
  * Time: 4:22 PM
  */
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Captionable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDimensions;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDuration;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasThumbnail;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasVideo;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasVoice;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Streamable;
 
-class SendVideo extends SendAbstract
+class SendMethodVoice extends SendMethodAbstract
 {
-    use HasVideo,
-        Streamable,
+    use HasVoice,
         HasReplyMarkUp,
         DisablesNotification,
         Parsable,
         RepliesToMessage,
         Captionable,
-        HasDuration,
-        HasThumbnail,
-        HasDimensions;
-
+        HasDuration;
 
     public function method() : string
     {
-        return 'sendVideo';
+        return 'sendVoice';
     }
 
     protected function getRequiredParams() : array
     {
         return [
             'chat_id' => $this->chatId,
-            'video'   => $this->video
+            'voice'   => $this->voice
         ];
     }
 
@@ -49,9 +43,6 @@ class SendVideo extends SendAbstract
     {
         $this->addParam('caption', $this->caption);
         $this->addParam('duration', $this->duration);
-        $this->addParam('height', $this->height);
-        $this->addParam('width', $this->width);
-        $this->addParam('supports_streaming', $this->supportStreaming);
         $this->addParam('parse_mode', $this->parsMode);
         $this->addParam('disable_notification', $this->disableNotification);
         $this->addParam('reply_to_message_id', $this->replyToMessageId);
@@ -60,7 +51,7 @@ class SendVideo extends SendAbstract
 
     protected function requiredParams() : array
     {
-        return ['chat_id', 'video'];
+        return ['chat_id', 'voice'];
     }
 
 }
