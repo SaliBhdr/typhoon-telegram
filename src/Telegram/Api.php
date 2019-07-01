@@ -196,10 +196,6 @@ class Api
             return new Dynamic($this->{$apiMethodObj->getRequestMethod()}($apiMethodObj->method(), $apiMethodObj->getParams()));
         }
 
-        if ($apiMethodObj instanceof GetMe) {
-            return $this->{$apiMethodObj->method()};
-        }
-
         return $this->{$apiMethodObj->method()}($apiMethodObj->getParams());
 
     }

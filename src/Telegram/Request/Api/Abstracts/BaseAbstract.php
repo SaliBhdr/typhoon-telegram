@@ -152,7 +152,7 @@ abstract class BaseAbstract
     /**
      * @return Api
      */
-    private function selectBot()
+    protected function selectBot()
     {
         if (is_null($this->botName))
             $this->apiInstance->setAccessToken(config('telegram.default_bot_token', false));
