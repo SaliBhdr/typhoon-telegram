@@ -8,11 +8,11 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Exceptions;
 
-class InvalidChatActionException extends TelegramException
+class TelegramProfilePhotoRangeLimitException extends TelegramException
 {
-    public function __construct(array $chatActions)
+    public function __construct($min, $max)
     {
-        $message = 'Invalid Action! Accepted values: '.implode(', ', $chatActions);
+        $message = "The profile limit param range must be between {$min} and {$max}";
 
         parent::__construct($message, 400);
     }

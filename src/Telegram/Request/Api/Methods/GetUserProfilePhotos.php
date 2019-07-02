@@ -7,7 +7,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\ProfilePhotoLimitRangeException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramProfilePhotoRangeLimitException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasOffset;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasUserId;
@@ -49,12 +49,12 @@ class GetUserProfilePhotos extends MethodAbstract
     }
 
     /**
-     * @throws ProfilePhotoLimitRangeException
+     * @throws TelegramProfilePhotoRangeLimitException
      */
     protected function extraValidation()
     {
         if (!is_null($this->limit) && !($this->limit >= static::minLimit && $this->limit <= static::maxLimit))
-            throw new ProfilePhotoLimitRangeException(static::minLimit, static::maxLimit);
+            throw new TelegramProfilePhotoRangeLimitException(static::minLimit, static::maxLimit);
     }
 
 }

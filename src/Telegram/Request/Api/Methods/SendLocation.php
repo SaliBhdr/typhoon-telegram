@@ -7,7 +7,7 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\LocationLivePeriodException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramLocationLivePeriodException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasLocation;
@@ -55,11 +55,11 @@ class SendLocation extends SendMethodAbstract
     }
 
     /**
-     * @throws LocationLivePeriodException
+     * @throws TelegramLocationLivePeriodException
      */
     protected function extraValidation()
     {
         if (!is_null($this->livePeriod) && !($this->livePeriod >= static::minLivePeriod && $this->livePeriod <= static::minLivePeriod))
-            throw new LocationLivePeriodException(static::minLivePeriod, static::minLivePeriod);
+            throw new TelegramLocationLivePeriodException(static::minLivePeriod, static::minLivePeriod);
     }
 }

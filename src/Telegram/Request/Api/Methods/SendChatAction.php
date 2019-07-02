@@ -8,7 +8,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\InvalidChatActionException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramInvalidChatActionException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasChatAction;
 
@@ -42,12 +42,12 @@ class SendChatAction extends SendMethodAbstract
     }
 
     /**
-     * @throws InvalidChatActionException
+     * @throws TelegramInvalidChatActionException
      */
     protected function extraValidation()
     {
         if (!isset($this->params['action']) && in_array($this->params['action'], $this->chatActions)) {
-            throw new InvalidChatActionException($this->chatActions);
+            throw new TelegramInvalidChatActionException($this->chatActions);
         }
     }
 }

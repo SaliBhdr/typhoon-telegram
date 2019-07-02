@@ -6,9 +6,10 @@ use Illuminate\Container\Container;
 use Illuminate\Support\Str;
 use SaliBhdr\TyphoonTelegram\Telegram\Commands\CommandBus;
 use SaliBhdr\TyphoonTelegram\Telegram\Commands\CommandInterface;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\InvalidChatActionException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramInvalidChatActionException;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TokenNotProvidedException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramTokenNotProvidedException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramWebhookException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods\SendDynamic;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Client as TelegramClient;
@@ -204,18 +205,6 @@ class Api
     }
 
     /**
-     * The default headers used with every request.
-     *
-     * @return array
-     */
-    public function getDefaultHeaders()
-    {
-        return [
-            'User-Agent' => 'Telegram Bot PHP SDK v' . Api::VERSION . ' - (https://github.com/SaliBhdr/typhoon-telegram)',
-        ];
-    }
-
-    /**
      * @param array $keyboard
      *
      * @return array
@@ -271,7 +260,7 @@ class Api
      *
      * @return TelegramResponse
      *
-     * @throws InvalidChatActionException
+     * @throws TelegramInvalidChatActionException
      */
     public function sendChatAction(array $params)
     {
@@ -279,7 +268,7 @@ class Api
             return $this->post('sendChatAction', $params);
         }
 
-        throw new InvalidChatActionException($this->chatActions);
+        throw new TelegramInvalidChatActionException($this->chatActions);
     }
 
     public function bot(string $botName)
@@ -479,12 +468,12 @@ class Api
      * Returns Telegram Bot API Access Token.
      *
      * @return string
-     * @throws TokenNotProvidedException
+     * @throws TelegramTokenNotProvidedException
      */
     public function getAccessToken()
     {
         if (!$this->accessToken)
-            throw new TokenNotProvidedException();
+            throw new TelegramTokenNotProvidedException();
 
         return $this->accessToken;
     }
@@ -1012,11 +1001,11 @@ class Api
     public function setWebhook(array $params)
     {
         if (filter_var($params['url'], FILTER_VALIDATE_URL) === false) {
-            throw new TelegramException('Invalid URL Provided');
+            throw new TelegramWebhookException('Invalid URL, Provided url has invalid format');
         }
 
         if (parse_url($params['url'], PHP_URL_SCHEME) !== 'https') {
-            throw new TelegramException('Invalid URL, should be a HTTPS url.');
+            throw new TelegramWebhookException('Invalid URL, The url must br start with HTTPS');
         }
 
         return $this->uploadFile('setWebhook', $params);
@@ -1372,7 +1361,7 @@ class Api
      * @param array $params
      *
      * @return TelegramRequest
-     * @throws TokenNotProvidedException
+     * @throws TelegramTokenNotProvidedException
      */
     public function makeRequestInstance(
         $method,

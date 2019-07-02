@@ -118,16 +118,14 @@ class Request
     }
 
     /**
-     * Validate that bot access token exists for this request.
-     *
-     * @throws TelegramException
+     * Validate that bot access token exists for this request.*
      */
-    public function validateAccessToken()
+    public function isAccessTokenExists()
     {
-        $accessToken = $this->getAccessToken();
-        if ($accessToken === null) {
-            throw new TelegramException('You must provide your bot access token to make any API requests.');
-        }
+        if ($this->getAccessToken())
+            return true;
+
+        return false;
     }
 
     /**
@@ -290,7 +288,7 @@ class Request
     public function getDefaultHeaders()
     {
         return [
-            'User-Agent' => 'Telegram Bot PHP SDK v'.Api::VERSION.' - (https://github.com/irazasyed/telegram-bot-sdk)',
+            'User-Agent' => 'Telegram Bot PHP SDK v' . Api::VERSION . ' - (https://github.com/SaliBhdr/typhoon-telegram)',
         ];
     }
 

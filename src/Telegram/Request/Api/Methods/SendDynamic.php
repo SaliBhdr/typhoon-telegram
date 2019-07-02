@@ -8,7 +8,7 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\RequestMethodInvalidException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramInvalidRequestMethodException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Finals\ApiRequest;
 
@@ -24,13 +24,13 @@ class SendDynamic extends SendMethodAbstract
      * @param $requestMethod
      * @param $method
      *
-     * @throws RequestMethodInvalidException
+     * @throws TelegramInvalidRequestMethodException
      * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     public function __construct($requestMethod, $method)
     {
         if (!isset($method) && !in_array($method, [ApiRequest::GET, ApiRequest::POST, ApiRequest::MULTIPART]))
-            throw new RequestMethodInvalidException();
+            throw new TelegramInvalidRequestMethodException();
 
         $this->method = $method;
 
