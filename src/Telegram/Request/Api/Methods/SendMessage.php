@@ -48,7 +48,7 @@ class SendMessage extends SendMethodAbstract
 
     protected function requiredParams() : array
     {
-//        return [];
+        return [];
         return ['chat_id', 'text'];
     }
 }

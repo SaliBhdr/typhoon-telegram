@@ -17,7 +17,7 @@ class LaravelServiceProvider extends TelegramServiceProvider
 
     protected function addConfig()
     {
-        $this->publishes([$this->getConfigFile() => config_path('telegram.php')]);
+        $this->publishes([$this->getConfigFile() => config_path('telegram.php')],'Telegram');
     }
 
     protected function registerExceptionHandler()
