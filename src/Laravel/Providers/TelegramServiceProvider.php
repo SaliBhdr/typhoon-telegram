@@ -36,6 +36,8 @@ abstract class TelegramServiceProvider extends ServiceProvider
 
         $this->bindMainClass();
 
+        dd(1);
+
     }
 
     /**

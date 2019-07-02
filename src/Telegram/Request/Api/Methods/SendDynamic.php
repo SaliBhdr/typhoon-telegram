@@ -12,7 +12,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\RequestMethodInvalidException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Finals\ApiRequest;
 
-class SendMethodDynamic extends SendMethodAbstract
+class SendDynamic extends SendMethodAbstract
 {
     protected $method;
 

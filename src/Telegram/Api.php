@@ -10,7 +10,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\InvalidChatActionException;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TokenNotProvidedException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods\SendMethodDynamic;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods\SendDynamic;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Client as TelegramClient;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\GuzzleHttpClient as HttpClient;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\HttpClientInterface;
@@ -126,10 +126,6 @@ class Api
 
         $this->accessToken = isset($token) ? $token : getenv(static::BOT_TOKEN_ENV_NAME);
 
-//        if (!$this->accessToken) {
-//            throw new TokenNotProvidedException();
-//        }
-
         if (isset($async)) {
             $this->setAsyncRequest($async);
         }
@@ -199,7 +195,7 @@ class Api
     public function send(MethodAbstract $apiMethodObj)
     {
 
-        if ($apiMethodObj instanceof SendMethodDynamic) {
+        if ($apiMethodObj instanceof SendDynamic) {
             return new Dynamic($this->{$apiMethodObj->getRequestMethod()}($apiMethodObj->method(), $apiMethodObj->getParams()));
         }
 
@@ -288,9 +284,9 @@ class Api
 
     public function bot(string $botName)
     {
-        if($botName == 'default'){
+        if ($botName == 'default') {
             $this->setAccessToken(config('telegram.default_bot_token', null));
-        }else{
+        } else {
             $bot = config('telegram.bots.' . $botName);
 
             if (!is_null($bot)
@@ -298,8 +294,7 @@ class Api
                 && !empty($bot)
                 && isset($bot['botToken'])
                 && isset($bot['is_active'])
-                && $bot['is_active'])
-            {
+                && $bot['is_active']) {
 
                 $this->setAccessToken($bot['botToken']);
 
@@ -484,9 +479,13 @@ class Api
      * Returns Telegram Bot API Access Token.
      *
      * @return string
+     * @throws TokenNotProvidedException
      */
     public function getAccessToken()
     {
+        if (!$this->accessToken)
+            throw new TokenNotProvidedException();
+
         return $this->accessToken;
     }
 
@@ -1076,7 +1075,7 @@ class Api
     public function getUpdates(array $params = [])
     {
         $response = $this->post('getUpdates', $params);
-        $updates = $response->getDecodedBody();
+        $updates  = $response->getDecodedBody();
 
         $data = [];
         if (isset($updates['result'])) {
@@ -1181,7 +1180,7 @@ class Api
             return $update;
         }
 
-        $updates = $this->getUpdates();
+        $updates   = $this->getUpdates();
         $highestId = -1;
 
         foreach ($updates as $update) {
@@ -1191,9 +1190,9 @@ class Api
 
         //An update is considered confirmed as soon as getUpdates is called with an offset higher than its update_id.
         if ($highestId != -1) {
-            $params = [];
+            $params           = [];
             $params['offset'] = $highestId + 1;
-            $params['limit'] = 1;
+            $params['limit']  = 1;
             $this->getUpdates($params);
         }
 
@@ -1322,7 +1321,7 @@ class Api
      */
     protected function uploadFile($endpoint, array $params = [])
     {
-        $i = 0;
+        $i                = 0;
         $multipart_params = [];
         foreach ($params as $name => $contents) {
             if (is_null($contents)) {
@@ -1331,10 +1330,10 @@ class Api
 
             if (!is_resource($contents) && $name !== 'url') {
                 $validUrl = filter_var($contents, FILTER_VALIDATE_URL);
-                $contents = (is_file($contents) || $validUrl) ? (new InputFile($contents))->open() : (string) $contents;
+                $contents = (is_file($contents) || $validUrl) ? (new InputFile($contents))->open() : (string)$contents;
             }
 
-            $multipart_params[$i]['name'] = $name;
+            $multipart_params[$i]['name']     = $name;
             $multipart_params[$i]['contents'] = $contents;
             ++$i;
         }
@@ -1373,6 +1372,7 @@ class Api
      * @param array $params
      *
      * @return TelegramRequest
+     * @throws TokenNotProvidedException
      */
     public function makeRequestInstance(
         $method,
@@ -1406,8 +1406,8 @@ class Api
         if ($action === 'get') {
             /* @noinspection PhpUndefinedFunctionInspection */
             $class_name = Str::studly(substr($method, 3));
-            $class = 'SaliBhdr\TyphoonTelegram\Telegram\Response\Models\\' . $class_name;
-            $response = $this->post($method, $arguments[0] ? : []);
+            $class      = 'SaliBhdr\TyphoonTelegram\Telegram\Response\Models\\' . $class_name;
+            $response   = $this->post($method, $arguments[0] ?: []);
 
             if (class_exists($class)) {
                 return new $class($response->getDecodedBody());

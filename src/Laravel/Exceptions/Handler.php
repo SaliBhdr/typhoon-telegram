@@ -41,7 +41,7 @@ class Handler
     public function render()
     {
         $api = Api::init();
-
+dump($api->getLastRequest()->getParams());
         return new Response(
             $api->getLastRequest(),
             $this->makeResponse()

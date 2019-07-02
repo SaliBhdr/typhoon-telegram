@@ -18,7 +18,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasTitle;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
 
-class SendMethodAudio extends SendMethodAbstract
+class SendAudio extends SendMethodAbstract
 {
     use HasAudio,
         HasPerformer,

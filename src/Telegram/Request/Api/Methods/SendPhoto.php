@@ -7,59 +7,47 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\LocationLivePeriodException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Captionable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasLocation;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasPhoto;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
 
-class SendMethodLocation extends SendMethodAbstract
+class SendPhoto extends SendMethodAbstract
 {
-
-    use HasLocation,
+    use HasPhoto,
+        HasReplyMarkUp,
         DisablesNotification,
+        Parsable,
         RepliesToMessage,
-        HasReplyMarkUp;
-
-    protected const minLivePeriod = 60;
-
-    protected const maxLivePeriod = 86400;
+        Captionable;
 
     public function method() : string
     {
-        return 'sendLocation';
+        return 'sendPhoto';
     }
 
     protected function getRequiredParams() : array
     {
         return [
-            'chat_id'   => $this->chatId,
-            'latitude'  => $this->latitude,
-            'longitude' => $this->longitude,
+            'chat_id' => $this->chatId,
+            'photo'   => $this->photo,
         ];
     }
 
     protected function addOptionalParams() : void
     {
-        $this->addParam('live_period', $this->livePeriod);
+        $this->addParam('caption', $this->caption);
+        $this->addParam('parse_mode', $this->parsMode);
         $this->addParam('disable_notification', $this->disableNotification);
         $this->addParam('reply_to_message_id', $this->replyToMessageId);
         $this->addParam('reply_markup', $this->replyMarkup);
-
     }
 
     protected function requiredParams() : array
     {
-        return ['chat_id', 'latitude', 'longitude'];
-    }
-
-    /**
-     * @throws LocationLivePeriodException
-     */
-    protected function extraValidation()
-    {
-        if (!is_null($this->livePeriod) && !($this->livePeriod >= static::minLivePeriod && $this->livePeriod <= static::minLivePeriod))
-            throw new LocationLivePeriodException(static::minLivePeriod, static::minLivePeriod);
+        return ['chat_id', 'photo'];
     }
 }

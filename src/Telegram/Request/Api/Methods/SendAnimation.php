@@ -9,39 +9,45 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Captionable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDocument;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasAnimation;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDimensions;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDuration;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasThumbnail;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
 
-class SendMethodDocument extends SendMethodAbstract
+class SendAnimation extends SendMethodAbstract
 {
-    use HasDocument,
+    use HasAnimation,
         HasReplyMarkUp,
         DisablesNotification,
         Parsable,
         RepliesToMessage,
         Captionable,
-        HasThumbnail;
-
+        HasDuration,
+        HasThumbnail,
+        HasDimensions;
 
     public function method() : string
     {
-        return 'sendDocument';
+        return 'sendAnimation';
     }
 
     protected function getRequiredParams() : array
     {
         return [
-            'chat_id'  => $this->chatId,
-            'document' => $this->document,
+            'chat_id'   => $this->chatId,
+            'animation' => $this->animation,
         ];
     }
 
     protected function addOptionalParams() : void
     {
         $this->addParam('caption', $this->caption);
+        $this->addParam('duration', $this->duration);
+        $this->addParam('height', $this->height);
+        $this->addParam('width', $this->width);
         $this->addParam('thumb', $this->thumbnail);
         $this->addParam('parse_mode', $this->parsMode);
         $this->addParam('disable_notification', $this->disableNotification);
@@ -51,7 +57,7 @@ class SendMethodDocument extends SendMethodAbstract
 
     protected function requiredParams() : array
     {
-        return ['chat_id', 'document'];
+        return ['chat_id', 'animation'];
     }
 
 }

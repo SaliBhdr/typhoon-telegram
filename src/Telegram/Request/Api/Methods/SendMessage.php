@@ -15,7 +15,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasText;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
 
-class SendMethodMessage extends SendMethodAbstract
+class SendMessage extends SendMethodAbstract
 {
     use DisablesWebPagePreview,
         HasText,

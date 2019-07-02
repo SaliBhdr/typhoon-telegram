@@ -12,7 +12,7 @@ use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\InvalidChatActionException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasChatAction;
 
-class SendMethodChatAction extends SendMethodAbstract
+class SendChatAction extends SendMethodAbstract
 {
 
     use HasChatAction;

@@ -9,17 +9,19 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Captionable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasAnimation;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDimensions;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDuration;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasThumbnail;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasVideo;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Streamable;
 
-class SendMethodAnimation extends SendMethodAbstract
+class SendVideo extends SendMethodAbstract
 {
-    use HasAnimation,
+    use HasVideo,
+        Streamable,
         HasReplyMarkUp,
         DisablesNotification,
         Parsable,
@@ -29,16 +31,17 @@ class SendMethodAnimation extends SendMethodAbstract
         HasThumbnail,
         HasDimensions;
 
+
     public function method() : string
     {
-        return 'sendAnimation';
+        return 'sendVideo';
     }
 
     protected function getRequiredParams() : array
     {
         return [
-            'chat_id'   => $this->chatId,
-            'animation' => $this->animation,
+            'chat_id' => $this->chatId,
+            'video'   => $this->video
         ];
     }
 
@@ -48,7 +51,7 @@ class SendMethodAnimation extends SendMethodAbstract
         $this->addParam('duration', $this->duration);
         $this->addParam('height', $this->height);
         $this->addParam('width', $this->width);
-        $this->addParam('thumb', $this->thumbnail);
+        $this->addParam('supports_streaming', $this->supportStreaming);
         $this->addParam('parse_mode', $this->parsMode);
         $this->addParam('disable_notification', $this->disableNotification);
         $this->addParam('reply_to_message_id', $this->replyToMessageId);
@@ -57,7 +60,7 @@ class SendMethodAnimation extends SendMethodAbstract
 
     protected function requiredParams() : array
     {
-        return ['chat_id', 'animation'];
+        return ['chat_id', 'video'];
     }
 
 }
