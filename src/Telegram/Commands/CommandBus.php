@@ -63,9 +63,10 @@ class CommandBus
      *
      * @param CommandInterface|string $command Either an object or full path to the command class.
      *
-     * @throws TelegramException
-     *
      * @return CommandBus
+     * @throws TelegramException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \ReflectionException
      */
     public function addCommand($command)
     {
@@ -204,6 +205,7 @@ class CommandBus
      * @param $commandClass
      *
      * @return object
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \ReflectionException
      */
     private function buildDependencyInjectedCommand($commandClass)

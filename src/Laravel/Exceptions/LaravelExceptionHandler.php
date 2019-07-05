@@ -18,8 +18,8 @@ class LaravelExceptionHandler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request $request
      * @param \Exception $e
+     *
      * @return \Symfony\Component\HttpFoundation\Response
-     * @throws TelegramException
      */
     public function render($request, \Exception $e)
     {

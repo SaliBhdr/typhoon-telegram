@@ -20,7 +20,6 @@ class LumenExceptionHandler extends ExceptionHandler
      * @param \Exception $e
      *
      * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
-     * @throws TelegramException
      */
     public function render($request, \Exception $e)
     {

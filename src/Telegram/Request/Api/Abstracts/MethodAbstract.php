@@ -10,7 +10,6 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts;
 use Illuminate\Support\Collection;
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramParamsRequiredException;
-use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Message;
 
 abstract class MethodAbstract
 {
@@ -21,9 +20,7 @@ abstract class MethodAbstract
 
     protected $params = [];
 
-    /** @var Api $apiInstance */
-    protected $apiInstance;
-
+    /** @var string|int $botName */
     protected $botName;
 
     abstract protected function getRequiredParams() : array;
@@ -136,8 +133,7 @@ abstract class MethodAbstract
      */
     protected function setApiInstance()
     {
-        $this->apiInstance = Api::init();
-        $this->apiInstance->makeRequestInstance('POST',$this->method(),$this->params);
+        Api::init()->makeRequestInstance('POST', $this->method(), $this->params);
     }
 
     /**
@@ -145,22 +141,23 @@ abstract class MethodAbstract
      * @throws TelegramParamsRequiredException
      * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
-    public function send() : Message
+    public function send()
     {
         return $this->selectBot()->send($this);
     }
 
     /**
      * @return Api
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     protected function selectBot()
     {
         if (is_null($this->botName))
-            $this->apiInstance->setAccessToken(config('telegram.default_bot_token', false));
+            Api::init()->bot('default');
         else
-            $this->apiInstance->bot($this->botName);
+            Api::init()->bot($this->botName);
 
-        return $this->apiInstance;
+        return Api::init();
     }
 
     abstract public function method();

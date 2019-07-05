@@ -40,21 +40,17 @@ class Handler
      */
     public function render()
     {
-        $api = Api::init();
-dump($api->getLastRequest()->getParams());
         return new Response(
-            $api->getLastRequest(),
+            Api::init()->getLastRequest(),
             $this->makeResponse()
         );
-
-
     }
 
     private function makeResponse()
     {
         return new CustomResponse(
             $this->getBody(),
-            $this->e->getCode(),
+            $this->getHttpCode(),
             $this->getHeaders()
         );
     }
@@ -73,6 +69,14 @@ dump($api->getLastRequest()->getParams());
     private function getHeaders()
     {
         return ['Content-Type' => 'application/json'];
+    }
+
+    private function getHttpCode(){
+        if(!in_array($this->e->getCode(),\Illuminate\Http\Response::$statusTexts)){
+            return 500;
+        }
+
+        return $this->e->getCode();
     }
 
 }

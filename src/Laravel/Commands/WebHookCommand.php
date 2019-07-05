@@ -30,7 +30,7 @@ class WebHookCommand extends Command
     private $bots;
     private $botName;
     private $botSetting;
-    private $activeBotsCount = 0;
+    private $activeBotsCount   = 0;
     private $deactiveBotsCount = 0;
 
     public function __construct()
@@ -103,7 +103,7 @@ class WebHookCommand extends Command
      */
     private function botIsActive()
     {
-        return $this->botSetting['is_active'] ?? FALSE;
+        return $this->botSetting['is_active'] ?? false;
     }
 
     /**
@@ -115,14 +115,14 @@ class WebHookCommand extends Command
      */
     private function setWebHook()
     {
-
-        $webHookResponse = Api::init()->setWebhook(['url' => "{$this->getUrl()}/{$this->botSetting['botToken']}/webhook"]);
+        $webHookResponse = Api::init($this->botSetting['botToken'])
+                              ->setWebhook(['url' => "{$this->getUrl()}/{$this->botSetting['botToken']}/webhook"]);
 
         return $webHookResponse->getRawResponse();
     }
 
     /**
-     * @param $activeCount
+     * @return void
      */
     private function incrementActive()
     {
@@ -130,13 +130,16 @@ class WebHookCommand extends Command
     }
 
     /**
-     * @param $deactiveCount
+     * @return void
      */
     private function incrementDeactive()
     {
         $this->deactiveBotsCount++;
     }
 
+    /**
+     * @return void
+     */
     private function emptyLine()
     {
         $this->line("");
@@ -190,7 +193,7 @@ class WebHookCommand extends Command
 
         $webHookResponse = $this->setWebHook();
 
-        if (isset($webHookResponse[0]) && $webHookResponse[0] === TRUE) {
+        if (isset($webHookResponse[0]) && $webHookResponse[0] === true) {
             $this->webhookSuccess($row);
 
             $this->incrementActive();

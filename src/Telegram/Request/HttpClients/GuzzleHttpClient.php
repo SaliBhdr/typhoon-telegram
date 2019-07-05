@@ -10,8 +10,6 @@ use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 
-/*** Class GuzzleHttpClient.
- */
 class GuzzleHttpClient implements HttpClientInterface
 {
     /**

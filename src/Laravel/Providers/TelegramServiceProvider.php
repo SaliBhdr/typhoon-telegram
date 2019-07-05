@@ -56,11 +56,10 @@ abstract class TelegramServiceProvider extends ServiceProvider
     protected function bindMainClass()
     {
         $this->app->singleton(Api::class, function ($app) {
-
             $telegram = Api::init(
-                $app['config']->get('telegram.default_bot_token', null),
+                $app['config']->get('telegram.bots.default.botToken'),
                 $app['config']->get('telegram.async_requests', false),
-                $app['config']->get('telegram.http_client_handler', null)
+                $app['config']->get('telegram.http_client_handler')
             );
 
             // Register Commands
