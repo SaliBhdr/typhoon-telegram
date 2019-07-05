@@ -18,8 +18,4 @@ trait Captionable
         return $this;
     }
 
-    public function getCaption(): ?string
-    {
-        return $this->caption;
-    }
 }

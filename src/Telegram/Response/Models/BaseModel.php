@@ -2,12 +2,16 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
 
+use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HigherOrderCollectionProxy;
+use Illuminate\Support\Str;
 
 /**
  * Class BaseObject.
  */
-abstract class BaseObject extends Collection
+abstract class BaseModel extends Collection
 {
     /**
      * Builds collection entity.
@@ -94,7 +98,7 @@ abstract class BaseObject extends Collection
      */
     public function getRawResult($data)
     {
-        return array_get($data, 'result', $data);
+        return Arr::get($data, 'result', $data);
     }
 
     /**
@@ -104,7 +108,7 @@ abstract class BaseObject extends Collection
      */
     public function getStatus()
     {
-        return array_get($this->items, 'ok', false);
+        return Arr::get($this->items, 'ok', false);
     }
 
     /**
@@ -120,7 +124,7 @@ abstract class BaseObject extends Collection
         $action = substr($name, 0, 3);
 
         if ($action === 'get') {
-            $property = snake_case(substr($name, 3));
+            $property = Str::snake(substr($name, 3));
             $response = $this->get($property);
 
             // Map relative property to an object
@@ -133,5 +137,75 @@ abstract class BaseObject extends Collection
         }
 
         return false;
+    }
+
+    /**
+     * Dynamically access collection proxies.
+     *
+     * @param  string $key
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    public function __get($key)
+    {
+        if (is_array($this->items) && array_key_exists($key, $this->items))
+            return $this->items[$key];
+
+        if (is_object($this->items) && property_exists($this->items, $key))
+            return $this->items->{$key};
+
+        if (!in_array($key, static::$proxies)) {
+            throw new Exception("Property [{$key}] does not exist on this collection instance.");
+        }
+
+        return new HigherOrderCollectionProxy($this, $key);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessage()
+    {
+        return $this->has('message');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCallbackQuery()
+    {
+        return $this->has('callback_query');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInlineCallbackQuery()
+    {
+        if ($this->isCallbackQuery()) {
+
+            $callback = $this->callback_query;
+
+            return isset($callback['inline_message_id']);
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotInlineCallbackQuery()
+    {
+        return !$this->isInlineCallbackQuery();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInlineQuery()
+    {
+        return $this->has('inline_query');
     }
 }

@@ -2,14 +2,10 @@
 
 namespace SaliBhdr\TyphoonTelegram\Laravel\Providers;
 
-use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Lumen\Application as LumenApplication;
 use SaliBhdr\TyphoonTelegram\Laravel\Commands\WebHookCommand;
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
 
-/*** Class TelegramServiceProvider.
- */
 abstract class TelegramServiceProvider extends ServiceProvider
 {
     /**
@@ -17,22 +13,14 @@ abstract class TelegramServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = TRUE;
-
-    /**
-     * Holds path to Config File.
-     *
-     * @var string
-     */
-    protected $config_filepath;
+    protected $defer = true;
 
     /**
      * Bootstrap the application events.
      */
     public function boot()
     {
-        $this->registerCommands();
-        $this->app->register('SaliBhdr\TyphoonTelegram\Providers\RouteServiceProvider');
+        $this->app->register(RouteServiceProvider::class);
     }
 
     /**
@@ -42,9 +30,11 @@ abstract class TelegramServiceProvider extends ServiceProvider
     {
         $this->registerExceptionHandler();
 
+        $this->registerCommands();
+
         $this->setupConfig();
 
-        $this->registerApi();
+        $this->bindMainClass();
     }
 
     /**
@@ -63,23 +53,20 @@ abstract class TelegramServiceProvider extends ServiceProvider
      * Initialize Telegram Bot SDK Library with Default Config.
      *
      */
-    protected function registerApi()
+    protected function bindMainClass()
     {
         $this->app->singleton(Api::class, function ($app) {
-
-            $config = $app['config'];
-
             $telegram = Api::init(
-                $config->get('telegram.default_bot_token', FALSE),
-                $config->get('telegram.async_requests', FALSE),
-                $config->get('telegram.http_client_handler', NULL)
+                $app['config']->get('telegram.bots.default.botToken'),
+                $app['config']->get('telegram.async_requests', false),
+                $app['config']->get('telegram.http_client_handler')
             );
 
             // Register Commands
-            $telegram->addCommands($config->get('telegram.commands', []));
+            $telegram->addCommands($app['config']->get('telegram.commands', []));
 
             // Check if DI needs to be enabled for Commands
-            if ($config->get('telegram.inject_command_dependencies', FALSE)) {
+            if ($app['config']->get('telegram.inject_command_dependencies', false)) {
                 $telegram->setContainer($app);
             }
 
@@ -112,6 +99,6 @@ abstract class TelegramServiceProvider extends ServiceProvider
 
     protected function getConfigFile()
     {
-        return __DIR__ . '/../../config/telegram.php';
+        return __DIR__ . '/../../../config/telegram.php';
     }
 }

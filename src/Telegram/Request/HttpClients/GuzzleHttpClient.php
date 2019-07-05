@@ -8,11 +8,9 @@ use GuzzleHttp\Promise;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 
-/*** Class GuzzleHttpClient.
- */
-class GuzzleHttpClient
+class GuzzleHttpClient implements HttpClientInterface
 {
     /**
      * HTTP client.
@@ -73,16 +71,16 @@ class GuzzleHttpClient
 
         $proxy = '';
 
-        if (isset($httpProxy['username']) && $httpProxy['username'])
+        if (isset($httpProxy['username']) && !empty($httpProxy['username']))
             $proxy .= "{$httpProxy['username']}";
 
-        if (isset($httpProxy['password']) && $httpProxy['password'])
+        if (isset($httpProxy['password']) && !empty($httpProxy['password']))
             $proxy .= ":{$httpProxy['password']}";
 
         if ($proxy)
             $proxy .= "@";
 
-        if (isset($httpProxy['ip']) && isset($httpProxy['port']) && $httpProxy['ip'] && $httpProxy['port'])
+        if (isset($httpProxy['ip']) && isset($httpProxy['port']) && !empty($httpProxy['ip']) && !empty($httpProxy['port']))
             $proxy = "{$proxy}{$httpProxy['ip']}:{$httpProxy['port']}";
 
         if ($proxy)
@@ -130,7 +128,7 @@ class GuzzleHttpClient
 
     /**
      * {@inheritdoc}
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function send(
         $url,
@@ -159,7 +157,7 @@ class GuzzleHttpClient
             $response = $e->getResponse();
 
             if (!$response instanceof ResponseInterface) {
-                throw new TelegramSDKException($e->getMessage(), $e->getCode());
+                throw new TelegramException($e->getMessage(), $e->getCode());
             }
         }
 

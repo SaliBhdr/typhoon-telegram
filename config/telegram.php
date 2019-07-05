@@ -2,19 +2,6 @@
 
 return [
     'automatic-routes' => true,
-    /*
-    |--------------------------------------------------------------------------
-    | Telegram Bot API Access Token [REQUIRED]
-    |--------------------------------------------------------------------------
-    |
-    | Your Telegram's Bot Access Token.
-    | Example: 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
-    |
-    | Refer for more details:
-    | https://core.telegram.org/bots#botfather
-    |
-    */
-    'default_bot_token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,7 +14,7 @@ return [
     | Possible Values: (Boolean) "true" OR "false"
     |
     */
-    'async_requests' => env('TELEGRAM_ASYNC_REQUESTS', false),
+    'async_requests'    => env('TELEGRAM_ASYNC_REQUESTS', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -35,22 +22,22 @@ return [
     |--------------------------------------------------------------------------
     |
     | If you'd like to use a custom HTTP Client Handler.
-    | Should be an instance of \SaliBhdr\TyphoonTelegram\HttpClients\HttpClientInterface
+    | Should be an instance of \SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\HttpClientInterface
     |
     | Default: GuzzlePHP
     |
     */
 
-    'http_client_handler' => null,
+    'http_client_handler' => \SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\GuzzleHttpClient::class,
 
-    'guzzle' => [
+    'guzzle'   => [
         'ssl-certificate' => false,
-        'http-proxy' => [
+        'http-proxy'      => [
             'use-proxy' => false,
-            'ip' => 'proxy-ip',
-            'port' => 'port',
-            'username' => 'username',
-            'password' => 'password'
+            'ip'        => 'proxy-ip',
+            'port'      => 'port',
+            'username'  => 'username',
+            'password'  => 'password'
         ],
     ],
 
@@ -70,21 +57,32 @@ return [
     |
     */
     'commands' => [
-        SaliBhdr\TyphoonTelegram\CommandsLaravel\HelpCommand::class,
+        SaliBhdr\TyphoonTelegram\Telegram\Commands\HelpCommand::class,
     ],
 
-
+    /*
+    |--------------------------------------------------------------------------
+    | Telegram Bot API Access Token [REQUIRED]
+    |--------------------------------------------------------------------------
+    |
+    | Your Telegram's Bot Access Token.
+    | Example: 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
+    |
+    | Refer for more details:
+    | https://core.telegram.org/bots#botfather
+    |
+    */
     'bots' => [
-        'CustomBotName' => [
-            'is_active' => false,
-            'baseUrl' => 'HOST DOMAIN',
-            'botToken' => 'YOUR BOT TOKEN',
+        'default'        => [
+            'is_active'  => true,
+            'baseUrl'    => env('APP_URL','YOUR-APP-URL'),
+            'botToken'   => env('TELEGRAM_DEFAULT_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
             'controller' => 'Telegram\V1\MainBotController@handleRequests'
         ],
         'CustomBotName2' => [
-            'is_active' => false,
-            'baseUrl' => 'HOST DOMAIN',
-            'botToken' => 'YOUR BOT TOKEN',
+            'is_active'  => false,
+            'baseUrl'    => 'HOST DOMAIN',
+            'botToken'   => 'YOUR BOT TOKEN',
             'controller' => 'Telegram\V1\SecondBotController@handleRequests'
         ],
     ]

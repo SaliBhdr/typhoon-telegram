@@ -9,7 +9,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Exceptions;
 
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Finals\ApiRequest;
 
-class RequestMethodInvalidException extends TelegramSDKException
+class TelegramInvalidRequestMethodException extends TelegramException
 {
     public function __construct()
     {

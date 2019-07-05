@@ -2,18 +2,17 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Response;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramResponseException;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Http\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 
 /**
  * Class Response.
  *
  * Handles the response from Telegram API.
  */
-class Response
+class Response extends JsonResponse
 {
     /**
      * @var null|int The HTTP status code response from API.
@@ -23,7 +22,7 @@ class Response
     /**
      * @var array The headers returned from API request.
      */
-    protected $headers;
+    public $headers;
 
     /**
      * @var string The raw body of the response from API request.
@@ -46,19 +45,14 @@ class Response
     protected $request;
 
     /**
-     * @var TelegramSDKException The exception thrown by this request.
-     */
-    protected $thrownException;
-
-    /**
      * Gets the relevant data from the Http client.
      *
-     * @param TelegramRequest                    $request
-     * @param ResponseInterface|PromiseInterface $response
+     * @param TelegramRequest $request
+     * @param ResponseInterface|PromiseInterface|CustomResponse $response
      */
     public function __construct(TelegramRequest $request, $response)
     {
-        if ($response instanceof ResponseInterface) {
+        if ($response instanceof ResponseInterface || $response instanceof CustomResponse) {
             $this->httpStatusCode = $response->getStatusCode();
             $this->body = $response->getBody();
             $this->headers = $response->getHeaders();
@@ -74,6 +68,8 @@ class Response
 
         $this->request = $request;
         $this->endPoint = (string) $request->getEndpoint();
+
+        parent::__construct($this->getDecodedBody(), $response->getStatusCode(), $response->getHeaders());
     }
 
     /**
@@ -158,34 +154,6 @@ class Response
     }
 
     /**
-     * Throws the exception.
-     *
-     * @throws TelegramSDKException
-     */
-    public function throwException()
-    {
-        throw $this->thrownException;
-    }
-
-    /**
-     * Instantiates an exception to be thrown later.
-     */
-    public function makeException()
-    {
-        $this->thrownException = TelegramResponseException::create($this);
-    }
-
-    /**
-     * Returns the exception that was thrown for this request.
-     *
-     * @return TelegramSDKException
-     */
-    public function getThrownException()
-    {
-        return $this->thrownException;
-    }
-
-    /**
      * Converts raw API response to proper decoded response.
      */
     public function decodeBody()
@@ -199,10 +167,6 @@ class Response
 
         if (!is_array($this->decodedBody)) {
             $this->decodedBody = [];
-        }
-
-        if ($this->isError()) {
-            $this->makeException();
         }
     }
 }

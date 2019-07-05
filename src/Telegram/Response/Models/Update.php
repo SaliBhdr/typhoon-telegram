@@ -9,7 +9,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method int      getUpdateId()   The update's unique identifier. Update identifiers start from a certain positive number and increase sequentially.
  * @method Message  getMessage()    (Optional). New incoming message of any kind - text, photo, sticker, etc.
  */
-class Update extends BaseObject
+class Update extends BaseModel
 {
     /**
      * {@inheritdoc}

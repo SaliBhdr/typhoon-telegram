@@ -8,11 +8,11 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Exceptions;
 
-class ProfilePhotoLimitRangeException extends TelegramSDKException
+class TelegramLocationLivePeriodException extends TelegramException
 {
     public function __construct($min, $max)
     {
-        $message = "The profile limit param range must be between {$min} and {$max}";
+        $message = "The live period param range must be between {$min} and {$max}";
 
         parent::__construct($message, 400);
     }

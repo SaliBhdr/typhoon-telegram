@@ -12,7 +12,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method string       getMimeType()   (Optional). MIME type of the file as defined by sender.
  * @method int          getFileSize()   (Optional). File size.
  */
-class Document extends BaseObject
+class Document extends BaseModel
 {
     /**
      * {@inheritdoc}

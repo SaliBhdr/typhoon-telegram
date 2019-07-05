@@ -3,7 +3,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Commands;
 
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
 
 /**
@@ -63,15 +63,16 @@ class CommandBus
      *
      * @param CommandInterface|string $command Either an object or full path to the command class.
      *
-     * @throws TelegramSDKException
-     *
      * @return CommandBus
+     * @throws TelegramException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \ReflectionException
      */
     public function addCommand($command)
     {
         if (!is_object($command)) {
             if (!class_exists($command)) {
-                throw new TelegramSDKException(
+                throw new TelegramException(
                     sprintf(
                         'Command class "%s" not found! Please make sure the class exists.',
                         $command
@@ -98,7 +99,7 @@ class CommandBus
             return $this;
         }
 
-        throw new TelegramSDKException(
+        throw new TelegramException(
             sprintf(
                 'Command class "%s" should be an instance of "SaliBhdr\TyphoonTelegram\Commands\CommandInterface"',
                 get_class($command)
@@ -142,7 +143,7 @@ class CommandBus
      * @param $message
      * @param $update
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return Update
      */
@@ -151,7 +152,6 @@ class CommandBus
         $match = $this->parseCommand($message);
         if (!empty($match)) {
             $command = $match[1];
-//            $bot = (!empty($match[2])) ? $match[2] : '';
             $arguments = $match[3];
             $this->execute($command, $arguments, $update);
         }
@@ -205,6 +205,7 @@ class CommandBus
      * @param $commandClass
      *
      * @return object
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \ReflectionException
      */
     private function buildDependencyInjectedCommand($commandClass)

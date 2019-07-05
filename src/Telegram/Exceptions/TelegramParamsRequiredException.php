@@ -7,7 +7,7 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Exceptions;
 
-class TelegramParamsRequiredException extends TelegramSDKException
+class TelegramParamsRequiredException extends TelegramException
 {
     public function __construct(array $requiredParams)
     {
@@ -19,12 +19,12 @@ class TelegramParamsRequiredException extends TelegramSDKException
         if (empty($requiredParams))
             return 'No params has been set';
 
-        $params = implode($requiredParams);
+        $params = implode(', ',$requiredParams);
 
         if (count($requiredParams) > 1)
-            $message = "{$params} parameters are required, please provide these parameters";
+            $message = "{$params} parameters are empty, please provide these parameters";
         else
-            $message = "{$params} parameter is required, please provide this parameter";
+            $message = "{$params} parameter is empty, please provide this parameter";
 
         return $message;
     }

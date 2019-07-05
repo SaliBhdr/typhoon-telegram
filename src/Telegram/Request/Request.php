@@ -4,7 +4,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request;
 
 
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 
 /**
  * Class Request.
@@ -118,16 +118,14 @@ class Request
     }
 
     /**
-     * Validate that bot access token exists for this request.
-     *
-     * @throws TelegramSDKException
+     * Validate that bot access token exists for this request.*
      */
-    public function validateAccessToken()
+    public function isAccessTokenExists()
     {
-        $accessToken = $this->getAccessToken();
-        if ($accessToken === null) {
-            throw new TelegramSDKException('You must provide your bot access token to make any API requests.');
-        }
+        if ($this->getAccessToken())
+            return true;
+
+        return false;
     }
 
     /**
@@ -157,16 +155,16 @@ class Request
     /**
      * Validate that the HTTP method is set.
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function validateMethod()
     {
         if (!$this->method) {
-            throw new TelegramSDKException('HTTP method not specified.');
+            throw new TelegramException('HTTP method not specified.');
         }
 
         if (!in_array($this->method, ['GET', 'POST'])) {
-            throw new TelegramSDKException('Invalid HTTP method specified.');
+            throw new TelegramException('Invalid HTTP method specified.');
         }
     }
 
@@ -290,7 +288,7 @@ class Request
     public function getDefaultHeaders()
     {
         return [
-            'User-Agent' => 'Telegram Bot PHP SDK v'.Api::VERSION.' - (https://github.com/irazasyed/telegram-bot-sdk)',
+            'User-Agent' => 'Telegram Bot PHP SDK v' . Api::VERSION . ' - (https://github.com/SaliBhdr/typhoon-telegram)',
         ];
     }
 

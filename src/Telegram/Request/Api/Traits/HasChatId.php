@@ -20,8 +20,4 @@ trait HasChatId
         return $this;
     }
 
-    public function getChatId()
-    {
-        return $this->chatId;
-    }
 }

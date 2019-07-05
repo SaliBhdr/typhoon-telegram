@@ -8,11 +8,11 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Exceptions;
 
-class LivePeriodException extends TelegramSDKException
+class TelegramInvalidChatActionException extends TelegramException
 {
-    public function __construct($min, $max)
+    public function __construct(array $chatActions)
     {
-        $message = "The live period param range must be between {$min} and {$max}";
+        $message = 'Invalid Action! Accepted values: '.implode(', ', $chatActions);
 
         parent::__construct($message, 400);
     }

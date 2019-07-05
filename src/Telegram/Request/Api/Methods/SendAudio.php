@@ -6,19 +6,24 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\SendAudioInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Captionable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasAudio;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDuration;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasPerformer;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasThumbnail;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasTitle;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
 
-class SendAudio extends SendAbstract implements SendAudioInterface
+class SendAudio extends SendMethodAbstract
 {
-    use HasReplyMarkUp,
+    use HasAudio,
+        HasPerformer,
+        HasTitle,
+        HasReplyMarkUp,
         DisablesNotification,
         Parsable,
         RepliesToMessage,
@@ -26,104 +31,35 @@ class SendAudio extends SendAbstract implements SendAudioInterface
         HasDuration,
         HasThumbnail;
 
-    protected $audio;
-
-    protected $performer;
-
-    protected $title;
-
-    protected function addParams(): void
-    {
-        $this->params = [
-            'chat_id' => $this->getChatId(),
-            'audio'   => $this->getAudio(),
-        ];
-    }
-
-    protected function addOptionalParams(): void
-    {
-        if (!is_null($this->getCaption())) {
-            $this->params['caption'] = $this->getCaption();
-        }
-
-        if (!is_null($this->getParsMode())) {
-            $this->params['parse_mode'] = $this->getParsMode();
-        }
-
-        if (!is_null($this->isNotificationDisabled())) {
-            $this->params['disable_notification'] = $this->isNotificationDisabled();
-        }
-
-        if (!is_null($this->getReplyToMessageId())) {
-            $this->params['reply_to_message_id'] = $this->getReplyToMessageId();
-        }
-
-        if (!is_null($this->getReplyMarkup())) {
-            $this->params['reply_markup'] = $this->getReplyMarkup();
-        }
-
-        if (!is_null($this->getDuration())) {
-            $this->params['duration'] = $this->getDuration();
-        }
-
-        if (!is_null($this->getPerformer())) {
-            $this->params['performer'] = $this->getPerformer();
-        }
-
-        if (!is_null($this->getTitle())) {
-            $this->params['title'] = $this->getTitle();
-        }
-
-        if (!is_null($this->getThumb())) {
-            $this->params['thumb'] = $this->getThumb();
-        }
-
-    }
-
-    public function method(): string
+    public function method() : string
     {
         return 'sendAudio';
     }
 
-    protected function requiredParams(): array
+    protected function getRequiredParams() : array
+    {
+        return [
+            'chat_id' => $this->chatId,
+            'audio'   => $this->audio,
+        ];
+    }
+
+    protected function addOptionalParams() : void
+    {
+        $this->addParam('parse_mode', $this->parsMode);
+        $this->addParam('disable_notification', $this->disableNotification);
+        $this->addParam('reply_to_message_id', $this->replyToMessageId);
+        $this->addParam('reply_markup', $this->replyMarkup);
+        $this->addParam('caption', $this->caption);
+        $this->addParam('duration', $this->duration);
+        $this->addParam('thumb', $this->thumbnail);
+        $this->addParam('title', $this->title);
+        $this->addParam('performer', $this->performer);
+
+    }
+
+    protected function requiredParams() : array
     {
         return ['chat_id', 'audio'];
     }
-
-    public function audio($audio)
-    {
-        $this->audio = $audio;
-
-        return $this;
-    }
-
-    public function getAudio()
-    {
-        return $this->audio;
-    }
-
-    public function performer(string $performer)
-    {
-        $this->performer = $performer;
-
-        return $this;
-    }
-
-    public function getPerformer(): ?string
-    {
-        return $this->performer;
-    }
-
-    public function title(string $trackName)
-    {
-        $this->title = $trackName;
-
-        return $this;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
 }

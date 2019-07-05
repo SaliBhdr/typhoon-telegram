@@ -6,20 +6,23 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\SendVideoInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Captionable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\DisablesNotification;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDimensions;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasDuration;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasReplyMarkUp;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasThumbnail;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasVideo;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Parsable;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\RepliesToMessage;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\Streamable;
 
-class SendVideo extends SendAbstract implements SendVideoInterface
+class SendVideo extends SendMethodAbstract
 {
-    use HasReplyMarkUp,
+    use HasVideo,
+        Streamable,
+        HasReplyMarkUp,
         DisablesNotification,
         Parsable,
         RepliesToMessage,
@@ -28,93 +31,36 @@ class SendVideo extends SendAbstract implements SendVideoInterface
         HasThumbnail,
         HasDimensions;
 
-    protected $video;
 
-    protected $supportStreaming;
-
-    public function method(): string
+    public function method() : string
     {
         return 'sendVideo';
     }
 
-    /**
-     * @param mixed $video
-     * @return SendVideo
-     */
-    public function video($video)
+    protected function getRequiredParams() : array
     {
-        $this->video = $video;
-
-        return $this;
-    }
-
-    protected function addParams(): void
-    {
-        $this->params = [
-            'chat_id' => $this->getChatId(),
-            'video'   => $this->getVideo()
+        return [
+            'chat_id' => $this->chatId,
+            'video'   => $this->video
         ];
     }
 
-    protected function addOptionalParams(): void
+    protected function addOptionalParams() : void
     {
-        if (!is_null($this->getParsMode())) {
-            $this->params['parse_mode'] = $this->getParsMode();
-        }
-
-        if (!is_null($this->isNotificationDisabled())) {
-            $this->params['disable_notification'] = $this->isNotificationDisabled();
-        }
-
-        if (!is_null($this->getReplyToMessageId())) {
-            $this->params['reply_to_message_id'] = $this->getReplyToMessageId();
-        }
-
-        if (!is_null($this->getReplyMarkup())) {
-            $this->params['reply_markup'] = $this->getReplyMarkup();
-        }
-
-        if (!is_null($this->getCaption())) {
-            $this->params['caption'] = $this->getCaption();
-        }
-
-        if (!is_null($this->getDuration())) {
-            $this->params['duration'] = $this->getDuration();
-        }
-
-        if (!is_null($this->getHeight())) {
-            $this->params['height'] = $this->getHeight();
-        }
-
-        if (!is_null($this->getWidth())) {
-            $this->params['width'] = $this->getWidth();
-        }
-
-        if (!is_null($this->isSupportsStreaming())) {
-            $this->params['supports_streaming'] = $this->isSupportsStreaming();
-        }
+        $this->addParam('caption', $this->caption);
+        $this->addParam('duration', $this->duration);
+        $this->addParam('height', $this->height);
+        $this->addParam('width', $this->width);
+        $this->addParam('supports_streaming', $this->supportStreaming);
+        $this->addParam('parse_mode', $this->parsMode);
+        $this->addParam('disable_notification', $this->disableNotification);
+        $this->addParam('reply_to_message_id', $this->replyToMessageId);
+        $this->addParam('reply_markup', $this->replyMarkup);
     }
 
-    protected function requiredParams(): array
+    protected function requiredParams() : array
     {
         return ['chat_id', 'video'];
-    }
-
-    public function getVideo()
-    {
-        return $this->video;
-    }
-
-    public function supportsStreaming()
-    {
-        $this->supportStreaming = true;
-
-        return $this;
-    }
-
-    public function isSupportsStreaming(): bool
-    {
-        return $this->supportStreaming;
     }
 
 }
