@@ -7,51 +7,35 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
 
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\GetAbstract;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\GetFileInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Traits\HasFile;
 
-class GetFile extends GetAbstract implements GetFileInterface
+
+class GetFile extends MethodAbstract
 {
 
-    protected $fileId;
+    use HasFile;
 
-    public function method(): string
+    public function method() : string
     {
         return 'getFile';
     }
 
-
-
-    protected function addParams(): void
+    protected function getRequiredParams() : array
     {
-        $this->params = [
-            'file_id' => $this->getFileId(),
+        return [
+            'file_id' => $this->fileId,
         ];
     }
 
-    protected function addOptionalParams(): void {}
+    protected function addOptionalParams() : void
+    {
+        return;
+    }
 
-    protected function requiredParams(): array
+    protected function requiredParams() : array
     {
         return ['file_id'];
     }
 
-    /**
-     * @param mixed $fileId
-     * @return GetFile
-     */
-    public function fileId(string $fileId)
-    {
-        $this->fileId = $fileId;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFileId(): ?string
-    {
-        return $this->fileId;
-    }
 }

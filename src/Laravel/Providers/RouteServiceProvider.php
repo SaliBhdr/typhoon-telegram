@@ -39,10 +39,9 @@ class RouteServiceProvider extends ServiceProvider
     private function registerBotWebhooks($bots)
     {
         foreach ($bots as $bot) {
-
-            if ($bot['is_active']) {
+            if ($bot['is_active'] ?? FALSE)
                 $this->registerBotRoute($bot);
-            }
+
         }
     }
 
@@ -55,6 +54,6 @@ class RouteServiceProvider extends ServiceProvider
 
     private function isAutoRoutesActive()
     {
-        return config('telegram.automatic-routes') ?? false;
+        return config('telegram.automatic-routes') ?? FALSE;
     }
 }

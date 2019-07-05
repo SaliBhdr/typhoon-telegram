@@ -6,15 +6,16 @@ use Illuminate\Container\Container;
 use Illuminate\Support\Str;
 use SaliBhdr\TyphoonTelegram\Telegram\Commands\CommandBus;
 use SaliBhdr\TyphoonTelegram\Telegram\Commands\CommandInterface;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\InvalidChatActionException;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramSDKException;
-use SaliBhdr\TyphoonTelegram\Telegram\Helpers\InputFile;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseInterface;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods\GetMe;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramInvalidChatActionException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramTokenNotProvidedException;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramWebhookException;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods\SendDynamic;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Client as TelegramClient;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\GuzzleHttpClient as HttpClient;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\GuzzleHttpClient;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\HttpClientInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Inputs\InputFile;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Dynamic;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\File;
@@ -36,7 +37,7 @@ class Api
     /**
      * @var string The name of the environment variable that contains the Telegram Bot API Access Token.
      */
-    const BOT_TOKEN_ENV_NAME = 'TELEGRAM_BOT_TOKEN';
+    const BOT_TOKEN_ENV_NAME = 'TELEGRAM_DEFAULT_BOT_TOKEN';
 
     /**
      * @var TelegramClient The Telegram client service.
@@ -49,9 +50,14 @@ class Api
     protected $accessToken = null;
 
     /**
-     * @var TelegramResponse|null Stores the last request made to Telegram Bot API.
+     * @var TelegramResponse|null Stores the last response of the request that made to Telegram Bot API.
      */
     protected $lastResponse;
+
+    /**
+     * @var TelegramRequest|null Stores the last request that made or going to be make to Telegram Bot API.
+     */
+    protected $lastRequest;
 
     /**
      * @var bool Indicates if the request to Telegram will be asynchronous (non-blocking).
@@ -79,6 +85,9 @@ class Api
      * @var int
      */
     protected $timeOut = 60;
+
+
+    protected $tokenCheck = true;
 
     /**
      * Connection timeout of the request in seconds.
@@ -114,53 +123,59 @@ class Api
      *                                                        will be asynchronous (non-blocking).
      * @param string|HttpClientInterface $http_client_handler (Optional) Custom HTTP Client Handler.
      *
-     * @throws TelegramSDKException
      */
-    private function __construct(string $token = NULL, bool $async = FALSE, $http_client_handler = NULL)
+    private function __construct(string $token = null, bool $async = false, $http_client_handler = null)
     {
-        if (!isset($http_client_handler)) {
-            $http_client_handler = new HttpClient();
-        }
 
-        $this->accessToken = isset($token) ? $token : getenv(static::BOT_TOKEN_ENV_NAME);
-        if (!$this->accessToken) {
-            throw new TelegramSDKException('Required "token" not supplied in config and could not find fallback environment variable "' . static::BOT_TOKEN_ENV_NAME . '"');
-        }
-
-        $httpClientHandler = null;
-        if (isset($http_client_handler)) {
-            if ($http_client_handler instanceof HttpClientInterface) {
-                $httpClientHandler = $http_client_handler;
-            } elseif ($http_client_handler === 'guzzle') {
-                $httpClientHandler = new HttpClient();
-            } else {
-                throw new \InvalidArgumentException('The HTTP Client Handler must be set to "guzzle", or be an instance of SaliBhdr\TyphoonTelegram\HttpClients\HttpClientInterface');
-            }
-        }
+        $this->setDefaultAccessToken($token);
 
         if (isset($async)) {
             $this->setAsyncRequest($async);
         }
 
-        $this->client = new TelegramClient($httpClientHandler);
+        $this->setHttpClientHandler($http_client_handler);
+    }
+
+    /**
+     * @param $token
+     */
+    private function setDefaultAccessToken($token){
+        if (isset($token))
+            $this->accessToken = $token;
+        else
+            $this->bot('default');
+    }
+
+    protected function setHttpClientHandler($http_client_handler)
+    {
+        if (!isset($http_client_handler) || $http_client_handler === 'guzzle') {
+            $http_client_handler = new GuzzleHttpClient();
+        } else {
+            $http_client_handler = new $http_client_handler();
+        }
+
+        if (!$http_client_handler instanceof HttpClientInterface) {
+            throw new \InvalidArgumentException('The HTTP Client Handler must be set to "guzzle", or be an instance of ' . HttpClientInterface::class);
+        }
+
+        $this->client = new TelegramClient($http_client_handler);
     }
 
     /**
      * @param string|NULL $token
      * @param bool $async
      * @param null $http_client_handler
+     *
      * @return Api
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
-    public static function init(string $token = NULL, bool $async = FALSE, $http_client_handler = NULL)
+    public static function init(string $token = null, bool $async = false, $http_client_handler = null)
     {
-        if (is_null(self::$instance))
-            self::$instance = new static($token, $async, $http_client_handler);
+        if (empty(static::$instance))
+            static::$instance = new static($token, $async, $http_client_handler);
 
-
-        return self::$instance;
+        return static::$instance;
     }
-
 
     /**    * Handle dynamic static method calls into the method.
      *
@@ -168,7 +183,7 @@ class Api
      * @param  array $parameters
      *
      * @return mixed
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public static function __callStatic($method, $parameters)
     {
@@ -185,31 +200,14 @@ class Api
      * @throws Exceptions\TelegramParamsRequiredException
      */
 
-    public function send(BaseInterface $apiMethodObj)
+    public function send(MethodAbstract $apiMethodObj)
     {
-
         if ($apiMethodObj instanceof SendDynamic) {
             return new Dynamic($this->{$apiMethodObj->getRequestMethod()}($apiMethodObj->method(), $apiMethodObj->getParams()));
         }
 
-        if ($apiMethodObj instanceof GetMe) {
-            return $this->{$apiMethodObj->method()};
-        }
-
         return $this->{$apiMethodObj->method()}($apiMethodObj->getParams());
 
-    }
-
-    /**
-     * The default headers used with every request.
-     *
-     * @return array
-     */
-    public function getDefaultHeaders()
-    {
-        return [
-            'User-Agent' => 'Telegram Bot PHP SDK v' . Api::VERSION . ' - (https://github.com/SaliBhdr/typhoon-telegram)',
-        ];
     }
 
     /**
@@ -243,10 +241,11 @@ class Api
      * @var int|string $params ['chat_id']
      * @var string $params ['action']
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return TelegramResponse
      */
+
     /**
      * Broadcast a Chat Action.
      *
@@ -264,11 +263,11 @@ class Api
      * @var int|string $params ['chat_id']
      * @var string $params ['action']
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return TelegramResponse
      *
-     * @throws InvalidChatActionException
+     * @throws TelegramInvalidChatActionException
      */
     public function sendChatAction(array $params)
     {
@@ -276,11 +275,17 @@ class Api
             return $this->post('sendChatAction', $params);
         }
 
-        throw new InvalidChatActionException($this->chatActions);
+        throw new TelegramInvalidChatActionException($this->chatActions);
     }
 
+    /**
+     * @param string $botName
+     *
+     * @return $this
+     */
     public function bot(string $botName)
     {
+
         $bot = config('telegram.bots.' . $botName);
 
         if (!is_null($bot)
@@ -288,8 +293,12 @@ class Api
             && !empty($bot)
             && isset($bot['botToken'])
             && isset($bot['is_active'])
-            && $bot['is_active'])
+            && $bot['is_active']) {
+
             $this->setAccessToken($bot['botToken']);
+
+        }
+
 
         return $this;
     }
@@ -318,7 +327,7 @@ class Api
      *
      * @return Message
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function sendAnimation(array $params)
     {
@@ -469,9 +478,13 @@ class Api
      * Returns Telegram Bot API Access Token.
      *
      * @return string
+     * @throws TelegramTokenNotProvidedException
      */
     public function getAccessToken()
     {
+        if (!$this->accessToken && $this->tokenCheck)
+            throw new TelegramTokenNotProvidedException();
+
         return $this->accessToken;
     }
 
@@ -533,7 +546,7 @@ class Api
      * Returns SDK's Command Bus.
      *
      * @return CommandBus
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function getCommandBus()
     {
@@ -550,7 +563,7 @@ class Api
      * @param CommandInterface|string $command
      *
      * @return CommandBus
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function addCommand($command)
     {
@@ -563,7 +576,7 @@ class Api
      * @param array $commands
      *
      * @return CommandBus
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function addCommands(array $commands)
     {
@@ -576,7 +589,7 @@ class Api
      * @param string $name
      *
      * @return CommandBus
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function removeCommand($name)
     {
@@ -589,7 +602,7 @@ class Api
      * @param array $names
      *
      * @return CommandBus
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function removeCommands(array $names)
     {
@@ -600,7 +613,7 @@ class Api
      * Returns list of available commands.
      *
      * @return Commands\Command[]
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function getCommands()
     {
@@ -614,7 +627,7 @@ class Api
      * @link https://core.telegram.org/bots/api#getme
      *
      * @return User
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function getMe()
     {
@@ -649,7 +662,7 @@ class Api
      * @var string $params ['reply_markup']
      *
      * @return Message
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function sendMessage(array $params)
     {
@@ -678,7 +691,7 @@ class Api
      * @var int $params ['message_id']
      *
      * @return Message
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function forwardMessage(array $params)
     {
@@ -711,7 +724,7 @@ class Api
      * @var string $params ['reply_markup']
      *
      * @return Message
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function sendPhoto(array $params)
     {
@@ -746,7 +759,7 @@ class Api
      * @var string $params ['reply_markup']
      *
      * @return Message
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function sendAudio(array $params)
     {
@@ -775,7 +788,7 @@ class Api
      * @var string $params ['reply_markup']
      *
      * @return Message
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function sendDocument(array $params)
     {
@@ -803,14 +816,14 @@ class Api
      * @var int $params ['reply_to_message_id']
      * @var string $params ['reply_markup']
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return Message
      */
     public function sendSticker(array $params)
     {
         if (is_file($params['sticker']) && (pathinfo($params['sticker'], PATHINFO_EXTENSION) !== 'webp')) {
-            throw new TelegramSDKException('Invalid Sticker Provided. Supported Format: Webp');
+            throw new TelegramException('Invalid Sticker Provided. Supported Format: Webp');
         }
 
         return $this->uploadFile('sendSticker', $params);
@@ -843,7 +856,7 @@ class Api
      * @var string $params ['reply_markup']
      *
      * @return Message
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function sendVideo(array $params)
     {
@@ -874,7 +887,7 @@ class Api
      * @var string $params ['reply_markup']
      *
      * @return Message
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function sendVoice(array $params)
     {
@@ -906,7 +919,7 @@ class Api
      *
      * @return Message
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function sendLocation(array $params)
     {
@@ -936,7 +949,7 @@ class Api
      * @var int $params ['limit']
      *
      * @return UserProfilePhotos
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function getUserProfilePhotos(array $params)
     {
@@ -965,7 +978,7 @@ class Api
      * @var string $params ['file_id']
      *
      * @return File
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function getFile(array $params)
     {
@@ -992,17 +1005,17 @@ class Api
      * @var string $params ['certificate'] Upload your public key certificate so that the root certificate in
      *                                      use can be checked.
      * @return Message
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      */
     public function setWebhook(array $params)
     {
         if (filter_var($params['url'], FILTER_VALIDATE_URL) === false) {
-            throw new TelegramSDKException('Invalid URL Provided');
+            throw new TelegramWebhookException('Invalid URL, Provided url has invalid format');
         }
 
         if (parse_url($params['url'], PHP_URL_SCHEME) !== 'https') {
-            throw new TelegramSDKException('Invalid URL, should be a HTTPS url.');
+            throw new TelegramWebhookException('Invalid URL, The url must br start with HTTPS');
         }
 
         return $this->uploadFile('setWebhook', $params);
@@ -1027,7 +1040,7 @@ class Api
      * Removes the outgoing webhook (if any).
      *
      * @return TelegramResponse
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function removeWebhook()
     {
@@ -1056,7 +1069,7 @@ class Api
      * @var int|null $params ['timeout']
      *
      * @return Update[]
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function getUpdates(array $params = [])
     {
@@ -1155,7 +1168,7 @@ class Api
      * @param bool $webhook
      *
      * @return Update|Update[]
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function commandsHandler($webhook = false)
     {
@@ -1189,7 +1202,8 @@ class Api
      * Check update object for a command and process.
      *
      * @param Update $update
-     * @throws TelegramSDKException
+     *
+     * @throws TelegramException
      */
     protected function processCommand(Update $update)
     {
@@ -1237,8 +1251,26 @@ class Api
         $types = ['audio', 'document', 'photo', 'sticker', 'video', 'voice', 'contact', 'location', 'text'];
 
         return $object->keys()
-            ->intersect($types)
-            ->pop();
+                      ->intersect($types)
+                      ->pop();
+    }
+
+    /**
+     * @return null|TelegramRequest
+     */
+    public function getLastRequest()
+    {
+        return $this->lastRequest;
+    }
+
+    /**
+     * @return Api
+     */
+    public function tokenMustNotCheck()
+    {
+        $this->tokenCheck = false;
+
+        return $this;
     }
 
     /**
@@ -1247,7 +1279,7 @@ class Api
      * @param string $endpoint
      * @param array $params
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return TelegramResponse
      */
@@ -1268,7 +1300,7 @@ class Api
      * @param bool $fileUpload Set true if a file is being uploaded.
      *
      * @return TelegramResponse
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     protected function post($endpoint, array $params = [], $fileUpload = false)
     {
@@ -1292,7 +1324,7 @@ class Api
      * @param string $endpoint
      * @param array $params
      *
-     * @throws TelegramSDKException
+     * @throws TelegramException
      *
      * @return Message
      */
@@ -1307,7 +1339,7 @@ class Api
 
             if (!is_resource($contents) && $name !== 'url') {
                 $validUrl = filter_var($contents, FILTER_VALIDATE_URL);
-                $contents = (is_file($contents) || $validUrl) ? (new InputFile($contents))->open() : (string)$contents;
+                $contents = (is_file($contents) || $validUrl) ? (new InputFile($contents))->open() : (string) $contents;
             }
 
             $multipart_params[$i]['name'] = $name;
@@ -1328,6 +1360,7 @@ class Api
      * @param array $params
      *
      * @return TelegramResponse
+     * @throws TelegramException
      */
     protected function sendRequest(
         $method,
@@ -1335,7 +1368,7 @@ class Api
         array $params = []
     )
     {
-        $request = $this->request($method, $endpoint, $params);
+        $request = $this->makeRequestInstance($method, $endpoint, $params);
 
         return $this->lastResponse = $this->client->sendRequest($request);
     }
@@ -1348,14 +1381,15 @@ class Api
      * @param array $params
      *
      * @return TelegramRequest
+     * @throws TelegramTokenNotProvidedException
      */
-    protected function request(
+    public function makeRequestInstance(
         $method,
         $endpoint,
         array $params = []
     )
     {
-        return new TelegramRequest(
+        return $this->lastRequest = new TelegramRequest(
             $this->getAccessToken(),
             $method,
             $endpoint,
@@ -1373,7 +1407,7 @@ class Api
      * @param $arguments
      *
      * @return bool|TelegramResponse
-     * @throws TelegramSDKException
+     * @throws TelegramException
      */
     public function __call($method, $arguments)
     {
@@ -1381,8 +1415,8 @@ class Api
         if ($action === 'get') {
             /* @noinspection PhpUndefinedFunctionInspection */
             $class_name = Str::studly(substr($method, 3));
-            $class = 'SaliBhdr\TyphoonTelegram\Objects\\' . $class_name;
-            $response = $this->post($method, $arguments[0] ?: []);
+            $class = 'SaliBhdr\TyphoonTelegram\Telegram\Response\Models\\' . $class_name;
+            $response = $this->post($method, $arguments[0] ? : []);
 
             if (class_exists($class)) {
                 return new $class($response->getDecodedBody());

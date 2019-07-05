@@ -10,7 +10,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method int      getFileSize()   (Optional). File size, if known.
  * @method string   getFilePath()   (Optional). File path. Use 'https://api.telegram.org/file/bot<token>/<file_path>' to get the file.
  */
-class File extends BaseObject
+class File extends BaseModel
 {
     /**
      * {@inheritdoc}

@@ -11,11 +11,6 @@ trait DisablesNotification
 {
     protected $disableNotification;
 
-    public function isNotificationDisabled(): ?bool
-    {
-        return $this->disableNotification;
-    }
-
     public function disableNotification()
     {
         $this->disableNotification = true;

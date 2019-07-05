@@ -19,8 +19,4 @@ trait HasThumbnail
         return $this;
     }
 
-    public function getThumb()
-    {
-        return $this->thumbnail;
-    }
 }

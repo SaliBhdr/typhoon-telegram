@@ -19,8 +19,4 @@ trait HasDuration
         return $this;
     }
 
-    public function getDuration(): ?int
-    {
-        return $this->duration;
-    }
 }

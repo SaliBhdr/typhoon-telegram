@@ -11,7 +11,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method string   getLastName()       (Optional). Contact's last name.
  * @method int      getUserId()         (Optional). Contact's user identifier in Telegram.
  */
-class Contact extends BaseObject
+class Contact extends BaseModel
 {
     /**
      * {@inheritdoc}

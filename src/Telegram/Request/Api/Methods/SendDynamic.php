@@ -8,13 +8,11 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Methods;
 
-
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\RequestMethodInvalidException;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendAbstract;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramInvalidRequestMethodException;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\SendMethodAbstract;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Finals\ApiRequest;
-use SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Interfaces\BaseSendMessageInterface;
 
-class SendDynamic extends SendAbstract implements BaseSendMessageInterface
+class SendDynamic extends SendMethodAbstract
 {
     protected $method;
 
@@ -22,18 +20,23 @@ class SendDynamic extends SendAbstract implements BaseSendMessageInterface
 
     /**
      * Send constructor.
+     *
      * @param $requestMethod
      * @param $method
-     * @throws RequestMethodInvalidException
+     *
+     * @throws TelegramInvalidRequestMethodException
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     public function __construct($requestMethod, $method)
     {
         if (!isset($method) && !in_array($method, [ApiRequest::GET, ApiRequest::POST, ApiRequest::MULTIPART]))
-            throw new RequestMethodInvalidException();
+            throw new TelegramInvalidRequestMethodException();
 
         $this->method = $method;
 
         $this->requestMethod = $requestMethod;
+
+        parent::__construct();
     }
 
     /**
@@ -44,16 +47,22 @@ class SendDynamic extends SendAbstract implements BaseSendMessageInterface
         return $this->requestMethod;
     }
 
-    protected function addParams(): void {}
+    protected function getRequiredParams() : array
+    {
+        return [];
+    }
 
-    protected function addOptionalParams(): void {}
+    protected function addOptionalParams() : void
+    {
+        return;
+    }
 
-    public function method(): string
+    public function method() : string
     {
         return $this->method;
     }
 
-    protected function requiredParams(): array
+    protected function requiredParams() : array
     {
         return [];
     }
