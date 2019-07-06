@@ -5,6 +5,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramInvalidResponseInstanceException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 
 /**
@@ -49,6 +50,8 @@ class Response extends JsonResponse
      *
      * @param TelegramRequest $request
      * @param ResponseInterface|PromiseInterface|CustomResponse $response
+     *
+     * @throws TelegramInvalidResponseInstanceException
      */
     public function __construct(TelegramRequest $request, $response)
     {
@@ -61,9 +64,7 @@ class Response extends JsonResponse
         } elseif ($response instanceof PromiseInterface) {
             $this->httpStatusCode = null;
         } else {
-            throw new \InvalidArgumentException(
-                'Second constructor argument "response" must be instance of ResponseInterface or PromiseInterface'
-            );
+            throw new TelegramInvalidResponseInstanceException();
         }
 
         $this->request = $request;
