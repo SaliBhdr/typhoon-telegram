@@ -53,7 +53,7 @@ abstract class BaseModel extends Collection
     /**
      * Map property relatives to appropriate objects.
      *
-     * @return array|void
+     * @return array|bool
      */
     public function mapRelatives()
     {
@@ -141,6 +141,20 @@ abstract class BaseModel extends Collection
     }
 
     /**
+     * checks if property exists in update instance and not empty
+     *
+     * @param $property
+     *
+     * @return bool
+     */
+    public function isset($property)
+    {
+        if($this->has($property) && isset($this->{$property}))
+            return true;
+
+        return false;
+    }
+    /**
      * Dynamically access collection proxies.
      *
      * @param  string $key
@@ -157,56 +171,58 @@ abstract class BaseModel extends Collection
             return $this->items->{$key};
 
         if (!in_array($key, static::$proxies)) {
-            throw new TelegramCollectionPropertyNotExistException($key);
+            return null;
         }
 
         return new HigherOrderCollectionProxy($this, $key);
     }
 
+    public function isOk()
+    {
+        return $this->getStatus();
+    }
+
     /**
+     * checks if webhook update is a message
+     *
      * @return bool
      */
     public function isMessage()
     {
-        return $this->has('message');
+        return $this->isset('message');
     }
 
     /**
+     * checks if webhook update is a callback_query
+     *
      * @return bool
      */
     public function isCallbackQuery()
     {
-        return $this->has('callback_query');
+        return $this->isset('callback_query');
     }
 
     /**
+     * checks if webhook update is a inline callback_query
+     *
      * @return bool
      */
     public function isInlineCallbackQuery()
     {
-        if ($this->isCallbackQuery()) {
+        if ($this->isCallbackQuery())
+            $this->isset($this->callback_query->inline_message_id);
 
-            $callback = $this->callback_query;
-
-            return isset($callback['inline_message_id']);
-        }
 
         return false;
     }
 
     /**
-     * @return bool
-     */
-    public function isNotInlineCallbackQuery()
-    {
-        return !$this->isInlineCallbackQuery();
-    }
-
-    /**
+     * checks if webhook update is a inline_query
+     *
      * @return bool
      */
     public function isInlineQuery()
     {
-        return $this->has('inline_query');
+        return $this->isset('inline_query');
     }
 }

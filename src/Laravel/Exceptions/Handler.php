@@ -10,7 +10,6 @@ namespace SaliBhdr\TyphoonTelegram\Laravel\Exceptions;
 
 use Illuminate\Http\Request;
 use SaliBhdr\TyphoonTelegram\Laravel\Facades\Telegram;
-use SaliBhdr\TyphoonTelegram\Telegram\Api;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\CustomResponse;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Response;
@@ -73,8 +72,9 @@ class Handler
         return ['Content-Type' => 'application/json'];
     }
 
-    private function getHttpCode(){
-        if(!array_key_exists($this->e->getCode(),\Illuminate\Http\Response::$statusTexts)){
+    private function getHttpCode()
+    {
+        if (!array_key_exists($this->e->getCode(), \Illuminate\Http\Response::$statusTexts)) {
             return 500;
         }
 
