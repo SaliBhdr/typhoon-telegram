@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HigherOrderCollectionProxy;
 use Illuminate\Support\Str;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramCollectionPropertyNotExistException;
 
 /**
  * Class BaseObject.
@@ -156,7 +157,7 @@ abstract class BaseModel extends Collection
             return $this->items->{$key};
 
         if (!in_array($key, static::$proxies)) {
-            throw new Exception("Property [{$key}] does not exist on this collection instance.");
+            throw new TelegramCollectionPropertyNotExistException($key);
         }
 
         return new HigherOrderCollectionProxy($this, $key);
