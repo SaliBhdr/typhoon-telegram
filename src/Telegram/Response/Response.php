@@ -53,7 +53,7 @@ class Response extends JsonResponse
      *
      * @throws TelegramInvalidResponseInstanceException
      */
-    public function __construct(TelegramRequest $request, $response)
+    public function __construct(?TelegramRequest $request, $response)
     {
         if ($response instanceof ResponseInterface || $response instanceof CustomResponse) {
             $this->httpStatusCode = $response->getStatusCode();
@@ -68,7 +68,9 @@ class Response extends JsonResponse
         }
 
         $this->request = $request;
-        $this->endPoint = (string) $request->getEndpoint();
+
+        if (isset($request))
+            $this->endPoint = (string) $request->getEndpoint();
 
         parent::__construct($this->getDecodedBody(), $response->getStatusCode(), $response->getHeaders());
     }
@@ -149,9 +151,14 @@ class Response extends JsonResponse
      *
      * @return bool
      */
-    public function isError()
+    public function isError() : bool
     {
         return isset($this->decodedBody['ok']) && ($this->decodedBody['ok'] === false);
+    }
+
+    public function isOk() : bool
+    {
+        return !$this->isError();
     }
 
     /**

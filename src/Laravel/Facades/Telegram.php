@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static getUserProfilePhotos(array $params)
  * @method static getFile(array $params)
  * @method static setWebhook(array $params)
- * @method static getWebhookUpdates()
+ * @method static \SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update getWebhookUpdates()
  * @method static removeWebhook()
  * @method static getUpdates(array $params = [])
  * @method static replyKeyboardMarkup(array $params)
@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\Facade;
  *
  * Class Telegram.
  * 
- * @see \SaliBhdr\TyphoonTelegram\Api
+ * @see \SaliBhdr\TyphoonTelegram\Telegram\Api
  */
 class Telegram extends Facade
 {

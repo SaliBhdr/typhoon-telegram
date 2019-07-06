@@ -17,9 +17,11 @@ use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\GuzzleHttpClient;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\HttpClientInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Inputs\InputFile;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
-use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Dynamic;
+use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\BaseModel;
+use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\TelegramCollection;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\File;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Message;
+use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\ModelDecorator;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\User;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\UserProfilePhotos;
@@ -139,7 +141,8 @@ class Api
     /**
      * @param $token
      */
-    private function setDefaultAccessToken($token){
+    private function setDefaultAccessToken($token)
+    {
         if (isset($token))
             $this->accessToken = $token;
         else
@@ -203,7 +206,7 @@ class Api
     public function send(MethodAbstract $apiMethodObj)
     {
         if ($apiMethodObj instanceof SendDynamic) {
-            return new Dynamic($this->{$apiMethodObj->getRequestMethod()}($apiMethodObj->method(), $apiMethodObj->getParams()));
+            return new TelegramCollection($this->{$apiMethodObj->getRequestMethod()}($apiMethodObj->method(), $apiMethodObj->getParams()));
         }
 
         return $this->{$apiMethodObj->method()}($apiMethodObj->getParams());
@@ -564,6 +567,8 @@ class Api
      *
      * @return CommandBus
      * @throws TelegramException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \ReflectionException
      */
     public function addCommand($command)
     {
@@ -626,14 +631,14 @@ class Api
      *
      * @link https://core.telegram.org/bots/api#getme
      *
-     * @return User
+     * @return User|BaseModel
      * @throws TelegramException
      */
     public function getMe()
     {
         $response = $this->post('getMe');
 
-        return new User($response->getDecodedBody());
+        return $this->makeUserCollection($response);
     }
 
     /**
@@ -661,14 +666,14 @@ class Api
      * @var int $params ['reply_to_message_id']
      * @var string $params ['reply_markup']
      *
-     * @return Message
+     * @return Message|BaseModel
      * @throws TelegramException
      */
     public function sendMessage(array $params)
     {
         $response = $this->post('sendMessage', $params);
 
-        return new Message($response->getDecodedBody());
+        return $this->makeMessageCollection($response);
     }
 
     /**
@@ -690,14 +695,14 @@ class Api
      * @var int $params ['from_chat_id']
      * @var int $params ['message_id']
      *
-     * @return Message
+     * @return Message|BaseModel
      * @throws TelegramException
      */
     public function forwardMessage(array $params)
     {
         $response = $this->post('forwardMessage', $params);
 
-        return new Message($response->getDecodedBody());
+        return $this->makeMessageCollection($response);
     }
 
     /**
@@ -917,7 +922,7 @@ class Api
      * @var int $params ['reply_to_message_id']
      * @var string $params ['reply_markup']
      *
-     * @return Message
+     * @return Message|BaseModel
      *
      * @throws TelegramException
      */
@@ -925,7 +930,7 @@ class Api
     {
         $response = $this->post('sendLocation', $params);
 
-        return new Message($response->getDecodedBody());
+        return $this->makeMessageCollection($response);
     }
 
 
@@ -948,14 +953,14 @@ class Api
      * @var int $params ['offset']
      * @var int $params ['limit']
      *
-     * @return UserProfilePhotos
+     * @return UserProfilePhotos|BaseModel
      * @throws TelegramException
      */
     public function getUserProfilePhotos(array $params)
     {
         $response = $this->post('getUserProfilePhotos', $params);
 
-        return new UserProfilePhotos($response->getDecodedBody());
+        return $this->makeUserProfilePhotosCollection($response);
     }
 
     /**
@@ -977,14 +982,14 @@ class Api
      *
      * @var string $params ['file_id']
      *
-     * @return File
+     * @return File|BaseModel
      * @throws TelegramException
      */
     public function getFile(array $params)
     {
         $response = $this->post('getFile', $params);
 
-        return new File($response->getDecodedBody());
+        return $this->makeFileCollection($response);
     }
 
     /**
@@ -1349,7 +1354,7 @@ class Api
 
         $response = $this->post($endpoint, $multipart_params, true);
 
-        return new Message($response->getDecodedBody());
+        return $this->makeMessageCollection($response);
     }
 
     /**
@@ -1499,4 +1504,45 @@ class Api
 
         return $this;
     }
+
+    /**
+     * @param TelegramResponse $response
+     *
+     * @return BaseModel|Message
+     */
+    protected function makeMessageCollection(TelegramResponse $response)
+    {
+        return ModelDecorator::make($response, Message::class)->respond();
+    }
+
+    /**
+     * @param TelegramResponse $response
+     *
+     * @return BaseModel|User
+     */
+    protected function makeUserCollection(TelegramResponse $response)
+    {
+        return ModelDecorator::make($response, User::class)->respond();
+    }
+
+    /**
+     * @param TelegramResponse $response
+     *
+     * @return BaseModel|User
+     */
+    protected function makeUserProfilePhotosCollection(TelegramResponse $response)
+    {
+        return ModelDecorator::make($response, UserProfilePhotos::class)->respond();
+    }
+
+    /**
+     * @param TelegramResponse $response
+     *
+     * @return BaseModel|User
+     */
+    protected function makeFileCollection(TelegramResponse $response)
+    {
+        return ModelDecorator::make($response, File::class)->respond();
+    }
+
 }

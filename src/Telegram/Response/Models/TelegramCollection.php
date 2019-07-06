@@ -13,7 +13,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
  * @method string   getFirstName() (Optional). First name of the other party in a private chat
  * @method string   getLastName()  (Optional). Last name of the other party in a private chat
  */
-class Dynamic extends BaseModel
+class TelegramCollection extends BaseModel
 {
     /**
      * {@inheritdoc}
