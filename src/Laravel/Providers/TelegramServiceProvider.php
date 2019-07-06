@@ -2,11 +2,12 @@
 
 namespace SaliBhdr\TyphoonTelegram\Laravel\Providers;
 
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use SaliBhdr\TyphoonTelegram\Laravel\Commands\WebHookCommand;
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
 
-abstract class TelegramServiceProvider extends ServiceProvider
+abstract class TelegramServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Indicates if loading of the provider is deferred.

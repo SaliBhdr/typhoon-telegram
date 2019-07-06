@@ -39,7 +39,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static commandsHandler($webhook = false)
  * @method static isMessageType($type, $object)
  * @method static detectMessageType($object)
- * @method static send(\SaliBhdr\TyphoonTelegram\Api\Interfaces\BaseSendMessageInterface $object)
+ * @method static getLastRequest()
+ * @method static send(\SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts\MethodAbstract $object)
  *
  * Class Telegram.
  * 
