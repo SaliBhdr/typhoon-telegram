@@ -64,6 +64,7 @@ abstract class TelegramServiceProvider extends ServiceProvider implements Deferr
             );
 
             // Register Commands
+            //Todo :: add handlers here
             $telegram->addCommands($app['config']->get('telegram.commands', []));
 
             // Check if DI needs to be enabled for Commands

@@ -18,10 +18,10 @@ use SaliBhdr\TyphoonTelegram\Telegram\Request\HttpClients\HttpClientInterface;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Inputs\InputFile;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\BaseModel;
-use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\TelegramCollection;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\File;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Message;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\ModelDecorator;
+use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\TelegramCollection;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\User;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\UserProfilePhotos;
@@ -549,7 +549,6 @@ class Api
      * Returns SDK's Command Bus.
      *
      * @return CommandBus
-     * @throws TelegramException
      */
     public function getCommandBus()
     {
@@ -582,6 +581,7 @@ class Api
      *
      * @return CommandBus
      * @throws TelegramException
+     * @throws \ReflectionException
      */
     public function addCommands(array $commands)
     {
@@ -618,7 +618,6 @@ class Api
      * Returns list of available commands.
      *
      * @return Commands\Command[]
-     * @throws TelegramException
      */
     public function getCommands()
     {
@@ -1079,7 +1078,7 @@ class Api
     public function getUpdates(array $params = [])
     {
         $response = $this->post('getUpdates', $params);
-        $updates = $response->getDecodedBody();
+        $updates  = $response->getDecodedBody();
 
         $data = [];
         if (isset($updates['result'])) {
@@ -1177,30 +1176,53 @@ class Api
      */
     public function commandsHandler($webhook = false)
     {
-        if ($webhook) {
-            $update = $this->getWebhookUpdates();
-            $this->processCommand($update);
+        if ($webhook)
+            return $this->processViaWebhook();
 
-            return $update;
-        }
 
-        $updates = $this->getUpdates();
+        return $this->processWithoutWebhook();
+    }
+
+    /**
+     * @return Update
+     * @throws TelegramException
+     */
+    public function processViaWebhook()
+    {
+        $update = $this->getWebhookUpdates();
+
+        $this->processUpdate($update);
+
+        return $update;
+    }
+
+    /**
+     * @param bool $all
+     * @return Update|Update[]
+     * @throws TelegramException
+     */
+    public function processWithoutWebhook($all = false)
+    {
+        $updates   = $this->getUpdates();
         $highestId = -1;
 
         foreach ($updates as $update) {
             $highestId = $update->getUpdateId();
-            $this->processCommand($update);
+            $this->processUpdate($update);
         }
 
         //An update is considered confirmed as soon as getUpdates is called with an offset higher than its update_id.
         if ($highestId != -1) {
-            $params = [];
+            $params           = [];
             $params['offset'] = $highestId + 1;
-            $params['limit'] = 1;
-            $this->getUpdates($params);
+            $params['limit']  = 1;
+            $updates          = $this->getUpdates($params);
         }
 
-        return $updates;
+        if ($all)
+            return $updates;
+
+        return current($updates);
     }
 
     /**
@@ -1208,13 +1230,35 @@ class Api
      *
      * @param Update $update
      *
-     * @throws TelegramException
      */
-    protected function processCommand(Update $update)
+    protected function processUpdate(Update $update)
     {
+        if ($update->isOk()) {
+            switch (true) {
+                case $update->isMessage():
+                    //todo :: handle messages
+                    break;
+                case $update->isCallbackQuery():
+
+                    if ($update->isInlineCallbackQuery()) {
+                        //todo :: handle inlineCallback query
+
+                    } else {
+                        //todo :: handle callback query
+                    }
+                    break;
+                case $update->isInlineQuery():
+                    //todo :: handle inline query
+
+                    break;
+            }
+        }
+
+        // todo :: every process must set an state to determine that if the request is processed so that no conflicts happen between 2 processes
+        // COMMANDS  are some kind of message so we have to separate them by some logic
         $message = $update->getMessage();
 
-        if ($message !== null && $message->has('text')) {
+        if ($message != null && $message->has('text')) {
             $this->getCommandBus()->handler($message->getText(), $update);
         }
     }
@@ -1335,7 +1379,7 @@ class Api
      */
     protected function uploadFile($endpoint, array $params = [])
     {
-        $i = 0;
+        $i                = 0;
         $multipart_params = [];
         foreach ($params as $name => $contents) {
             if (is_null($contents)) {
@@ -1344,10 +1388,10 @@ class Api
 
             if (!is_resource($contents) && $name !== 'url') {
                 $validUrl = filter_var($contents, FILTER_VALIDATE_URL);
-                $contents = (is_file($contents) || $validUrl) ? (new InputFile($contents))->open() : (string) $contents;
+                $contents = (is_file($contents) || $validUrl) ? (new InputFile($contents))->open() : (string)$contents;
             }
 
-            $multipart_params[$i]['name'] = $name;
+            $multipart_params[$i]['name']     = $name;
             $multipart_params[$i]['contents'] = $contents;
             ++$i;
         }
@@ -1420,8 +1464,8 @@ class Api
         if ($action === 'get') {
             /* @noinspection PhpUndefinedFunctionInspection */
             $class_name = Str::studly(substr($method, 3));
-            $class = 'SaliBhdr\TyphoonTelegram\Telegram\Response\Models\\' . $class_name;
-            $response = $this->post($method, $arguments[0] ? : []);
+            $class      = 'SaliBhdr\TyphoonTelegram\Telegram\Response\Models\\' . $class_name;
+            $response   = $this->post($method, $arguments[0] ?: []);
 
             if (class_exists($class)) {
                 return new $class($response->getDecodedBody());

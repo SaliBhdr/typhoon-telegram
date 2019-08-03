@@ -3,6 +3,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Commands;
 
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramCommandNotFoundException;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
 
@@ -48,6 +49,8 @@ class CommandBus
      * @param array $commands
      *
      * @return CommandBus
+     * @throws TelegramException
+     * @throws \ReflectionException
      */
     public function addCommands(array $commands)
     {
@@ -65,14 +68,13 @@ class CommandBus
      *
      * @return CommandBus
      * @throws TelegramException
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \ReflectionException
      */
     public function addCommand($command)
     {
         if (!is_object($command)) {
             if (!class_exists($command)) {
-                throw new TelegramException(
+                throw new TelegramCommandNotFoundException(
                     sprintf(
                         'Command class "%s" not found! Please make sure the class exists.',
                         $command
@@ -141,9 +143,7 @@ class CommandBus
      * Handles Inbound Messages and Executes Appropriate Command.
      *
      * @param $message
-     * @param $update
-     *
-     * @throws TelegramException
+     * @param Update $update
      *
      * @return Update
      */
@@ -182,16 +182,16 @@ class CommandBus
     /**
      * Execute the command.
      *
-     * @param $name
+     * @param $commandName
      * @param $arguments
      * @param $message
      *
      * @return mixed
      */
-    public function execute($name, $arguments, $message)
+    public function execute($commandName, $arguments, $message)
     {
-        if (array_key_exists($name, $this->commands)) {
-            return $this->commands[$name]->make($this->telegram, $arguments, $message);
+        if (array_key_exists($commandName, $this->commands)) {
+            return $this->commands[$commandName]->make($this->telegram, $arguments, $message);
         } elseif (array_key_exists('help', $this->commands)) {
             return $this->commands['help']->make($this->telegram, $arguments, $message);
         }
@@ -205,7 +205,6 @@ class CommandBus
      * @param $commandClass
      *
      * @return object
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \ReflectionException
      */
     private function buildDependencyInjectedCommand($commandClass)
