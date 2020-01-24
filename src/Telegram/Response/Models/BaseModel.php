@@ -210,8 +210,7 @@ abstract class BaseModel extends Collection
     public function isInlineCallbackQuery()
     {
         if ($this->isCallbackQuery())
-            $this->isset($this->callback_query->inline_message_id);
-
+           return isset($this->callback_query->inline_message_id);
 
         return false;
     }

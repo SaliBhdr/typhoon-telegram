@@ -142,9 +142,9 @@ abstract class Command implements CommandInterface
      */
     public function make($telegram, $arguments, $update)
     {
-        $this->telegram = $telegram;
+        $this->telegram  = $telegram;
         $this->arguments = $arguments;
-        $this->update = $update;
+        $this->update    = $update;
 
         return $this->handle($arguments);
     }
@@ -180,14 +180,14 @@ abstract class Command implements CommandInterface
         $action = substr($method, 0, 9);
         if ($action === 'replyWith') {
             $reply_name = studly_case(substr($method, 9));
-            $methodName = 'send'.$reply_name;
+            $methodName = 'send' . $reply_name;
 
             if (!method_exists($this->telegram, $methodName)) {
                 return 'Method Not Found';
             }
 
             $chat_id = $this->update->getMessage()->getChat()->getId();
-            $params = array_merge(compact('chat_id'), $arguments[0]);
+            $params  = array_merge(compact('chat_id'), $arguments[0]);
 
             return call_user_func_array([$this->telegram, $methodName], [$params]);
         }
