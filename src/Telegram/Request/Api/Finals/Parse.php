@@ -9,9 +9,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Finals;
 
 final class Parse
 {
-
     const MARKDOWN = 'Markdown';
 
     const HTML = 'HTML';
-
 }

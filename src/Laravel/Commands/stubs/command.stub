@@ -1,0 +1,44 @@
+<?php
+
+namespace DummyNamespace;
+
+use DummyRootNamespaceTelegram\Commands\Command;
+
+class DummyClass extends Command
+{
+
+/**
+     * make this true to not show in the list of help command
+     *
+     * @var boolean
+     */
+    protected $hidden = false;
+
+    /**
+     * if true it handles command automatically and skip the config for handle_commands
+     *
+     * @var bool
+     */
+    protected $handleAutomatically = true;
+
+    /**
+     * The name of the Telegram command.
+     * Ex: help - Whenever the user sends /help, this would be resolved.
+     *
+     * @var string
+     */
+    protected $name = '';
+
+    /**
+     * @var string The Telegram command description.
+     */
+    protected $description = '';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handle($arguments)
+    {
+
+    }
+}

@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Telegram\Handlers;
+
+use SaliBhdr\TyphoonTelegram\Telegram\BaseTelegramFlowHandler;
+
+class CallBackFlowHandler extends BaseTelegramFlowHandler{
+
+    public function boot()
+    {
+        //Todo:: add your property construction here
+    }
+
+    /**
+     * Here you have access to $this->update property that holds an Update object (telegram response to you)
+     * @see \SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update
+     *
+     */
+    public function handle()
+    {
+        //Todo:: handle you requests here
+    }
+}

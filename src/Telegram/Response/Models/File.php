@@ -4,7 +4,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
 
 /**
  * Class File.
- *
+ * @method bool isOk()
  *
  * @method string   getFileId()     Unique identifier for this file.
  * @method int      getFileSize()   (Optional). File size, if known.

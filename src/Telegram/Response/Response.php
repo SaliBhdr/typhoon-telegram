@@ -5,6 +5,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramInvalidResponseInstanceException;
 use SaliBhdr\TyphoonTelegram\Telegram\Request\Request as TelegramRequest;
 
 /**
@@ -49,10 +50,13 @@ class Response extends JsonResponse
      *
      * @param TelegramRequest $request
      * @param ResponseInterface|PromiseInterface|CustomResponse $response
+     *
+     * @throws TelegramInvalidResponseInstanceException
      */
-    public function __construct(TelegramRequest $request, $response)
+    public function __construct(?TelegramRequest $request, $response)
     {
         if ($response instanceof ResponseInterface || $response instanceof CustomResponse) {
+
             $this->httpStatusCode = $response->getStatusCode();
             $this->body = $response->getBody();
             $this->headers = $response->getHeaders();
@@ -61,15 +65,15 @@ class Response extends JsonResponse
         } elseif ($response instanceof PromiseInterface) {
             $this->httpStatusCode = null;
         } else {
-            throw new \InvalidArgumentException(
-                'Second constructor argument "response" must be instance of ResponseInterface or PromiseInterface'
-            );
+            throw new TelegramInvalidResponseInstanceException();
         }
 
         $this->request = $request;
-        $this->endPoint = (string) $request->getEndpoint();
 
-        parent::__construct($this->getDecodedBody(), $response->getStatusCode(), $response->getHeaders());
+        if (isset($request))
+            $this->endPoint = (string) $request->getEndpoint();
+
+        parent::__construct($this->getDecodedBody(), $this->httpStatusCode ?? 503, $this->headers ?? []);
     }
 
     /**
@@ -148,9 +152,14 @@ class Response extends JsonResponse
      *
      * @return bool
      */
-    public function isError()
+    public function isError() : bool
     {
         return isset($this->decodedBody['ok']) && ($this->decodedBody['ok'] === false);
+    }
+
+    public function isOk() : bool
+    {
+        return !$this->isError();
     }
 
     /**

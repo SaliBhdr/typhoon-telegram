@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Telegram\Commands;
+
+
+class StartCommand extends Command
+{
+    protected $name = "start";
+
+    protected $description = "for bot start";
+
+    /**
+     * Here you have access to $this->update property that holds an Update object (telegram response to you)
+     * @see \SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update
+     * {@inheritdoc}
+     */
+    public function handle($arguments)
+    {
+        //Todo:: Your logic here
+    }
+}

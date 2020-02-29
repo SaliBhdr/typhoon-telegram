@@ -14,7 +14,7 @@ trait HasReplyMarkUp
 
     public function replyMarkup(array $replyMarkup)
     {
-        $this->replyMarkup = $replyMarkup;
+        $this->replyMarkup = json_encode($replyMarkup);
 
         return $this;
     }
