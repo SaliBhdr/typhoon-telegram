@@ -1,0 +1,24 @@
+<?php
+
+
+namespace App\Telegram\Commands;
+
+use SaliBhdr\TyphoonTelegram\Telegram\Commands\Command as BaseCommand;
+
+abstract class Command extends BaseCommand
+{
+    /**
+     * Magic Method to handle all ReplyWith Methods.
+     *
+     * @param $method
+     * @param $arguments
+     *
+     * @return mixed|string
+     */
+    public function __call($method, $arguments)
+    {
+        //Todo:: add your logic if you want to edit the call method
+
+        return parent::__call($method, $arguments);
+    }
+}

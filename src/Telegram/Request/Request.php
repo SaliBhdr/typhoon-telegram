@@ -48,21 +48,21 @@ class Request
      *
      * @var bool
      */
-    protected $isAsyncRequest = false;
+    protected $isAsyncRequest;
 
     /**
      * Timeout of the request in seconds.
      *
      * @var int
      */
-    protected $timeOut = 30;
+    protected $timeOut;
 
     /**
      * Connection timeout of the request in seconds.
      *
      * @var int
      */
-    protected $connectTimeOut = 10;
+    protected $connectTimeOut;
 
     /**
      * Creates a new Request entity.
@@ -76,21 +76,17 @@ class Request
      * @param int         $connectTimeOut
      */
     public function __construct(
-        $accessToken = null,
-        $method = null,
-        $endpoint = null,
-        array $params = [],
-        $isAsyncRequest = false,
-        $timeOut = 60,
-        $connectTimeOut = 10
+        $accessToken,
+        $method,
+        $endpoint,
+        array $params,
+        $isAsyncRequest
     ) {
         $this->setAccessToken($accessToken);
         $this->setMethod($method);
         $this->setEndpoint($endpoint);
         $this->setParams($params);
         $this->setAsyncRequest($isAsyncRequest);
-        $this->setTimeOut($timeOut);
-        $this->setConnectTimeOut($connectTimeOut);
     }
 
     /**
@@ -300,17 +296,6 @@ class Request
         return $this->timeOut;
     }
 
-    /**
-     * @param int $timeOut
-     *
-     * @return $this
-     */
-    public function setTimeOut($timeOut)
-    {
-        $this->timeOut = $timeOut;
-
-        return $this;
-    }
 
     /**
      * @return int

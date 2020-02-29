@@ -2,25 +2,29 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
 
-use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HigherOrderCollectionProxy;
 use Illuminate\Support\Str;
-use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramCollectionPropertyNotExistException;
 
 /**
- * Class BaseObject.
- */
+ * Class BaseModel.
+ * @method int getErrorCode() (Optional). returns only if the response has error (Http code of Error)
+ * @method int getDescription() (Optional). returns only if the response has error (description of error)
+ **/
 abstract class BaseModel extends Collection
 {
+    private $status = false;
+
     /**
      * Builds collection entity.
-     *
      * @param array|mixed $data
+     * @param bool $status
      */
-    public function __construct($data)
+    public function __construct($data, bool $status = null)
     {
+        $this->initStatus($data, $status);
+
         parent::__construct($this->getRawResult($data));
 
         $this->mapRelatives();
@@ -28,17 +32,14 @@ abstract class BaseModel extends Collection
 
     /**
      * Property relations.
-     *
      * @return array
      */
     abstract public function relations();
 
     /**
      * Get an item from the collection by key.
-     *
      * @param mixed $key
      * @param mixed $default
-     *
      * @return mixed|static
      */
     public function get($key, $default = null)
@@ -52,8 +53,7 @@ abstract class BaseModel extends Collection
 
     /**
      * Map property relatives to appropriate objects.
-     *
-     * @return array|void
+     * @return array|bool
      */
     public function mapRelatives()
     {
@@ -67,12 +67,12 @@ abstract class BaseModel extends Collection
         foreach ($results as $key => $data) {
             foreach ($relations as $property => $class) {
                 if (!is_object($data) && isset($results[$key][$property])) {
-                    $results[$key][$property] = new $class($results[$key][$property]);
+                    $results[$key][$property] = new $class($results[$key][$property],$this->status);
                     continue;
                 }
 
                 if ($key === $property) {
-                    $results[$key] = new $class($results[$key]);
+                    $results[$key] = new $class($results[$key],$this->status);
                 }
             }
         }
@@ -82,7 +82,6 @@ abstract class BaseModel extends Collection
 
     /**
      * Returns raw response.
-     *
      * @return array|mixed
      */
     public function getRawResponse()
@@ -92,9 +91,7 @@ abstract class BaseModel extends Collection
 
     /**
      * Returns raw result.
-     *
      * @param $data
-     *
      * @return mixed
      */
     public function getRawResult($data)
@@ -104,20 +101,28 @@ abstract class BaseModel extends Collection
 
     /**
      * Get Status of request.
-     *
      * @return mixed
      */
-    public function getStatus()
+    public function isOk()
     {
-        return Arr::get($this->items, 'ok', false);
+        return $this->status;
+    }
+
+    /**
+     * checks error code
+     *
+     * @param int $errorCode
+     * @return bool
+     */
+    public function isErrorCode(int $errorCode)
+    {
+        return $this->getErrorCode() == $errorCode;
     }
 
     /**
      * Magic method to get properties dynamically.
-     *
      * @param $name
      * @param $arguments
-     *
      * @return mixed
      */
     public function __call($name, $arguments)
@@ -141,11 +146,22 @@ abstract class BaseModel extends Collection
     }
 
     /**
+     * checks if property exists in update instance and not empty
+     * @param $property
+     * @return bool
+     */
+    public function isset($property)
+    {
+        if ($this->has($property) && isset($this->{$property}))
+            return true;
+
+        return false;
+    }
+
+    /**
      * Dynamically access collection proxies.
-     *
-     * @param  string $key
+     * @param string $key
      * @return mixed
-     *
      * @throws \Exception
      */
     public function __get($key)
@@ -157,56 +173,22 @@ abstract class BaseModel extends Collection
             return $this->items->{$key};
 
         if (!in_array($key, static::$proxies)) {
-            throw new TelegramCollectionPropertyNotExistException($key);
+            return null;
         }
 
         return new HigherOrderCollectionProxy($this, $key);
     }
 
-    /**
-     * @return bool
-     */
-    public function isMessage()
+    private function initStatus($data, $status)
     {
-        return $this->has('message');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCallbackQuery()
-    {
-        return $this->has('callback_query');
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInlineCallbackQuery()
-    {
-        if ($this->isCallbackQuery()) {
-
-            $callback = $this->callback_query;
-
-            return isset($callback['inline_message_id']);
+        if (!is_null($status)) {
+            $this->status = $status;
+        } else {
+            if (is_array($data))
+                $this->status = Arr::get($data, 'ok', false);
+            elseif (is_object($data))
+                $this->status = $data->isOk;
         }
-
-        return false;
     }
 
-    /**
-     * @return bool
-     */
-    public function isNotInlineCallbackQuery()
-    {
-        return !$this->isInlineCallbackQuery();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInlineQuery()
-    {
-        return $this->has('inline_query');
-    }
 }

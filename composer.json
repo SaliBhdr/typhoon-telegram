@@ -3,12 +3,11 @@
     "description": "The Unofficial Telegram Bot API PHP SDK",
     "keywords": ["telegram", "telegram bot", "telegram bot api", "telegram sdk", "telegram php", "laravel telegram", "laravel"],
     "type": "library",
+    "license": "BSD-3-Clause",
     "require": {
         "php": ">=7.0.0",
-        "guzzlehttp/guzzle": "~6.0",
-        "illuminate/support": "~5.0"
+        "guzzlehttp/guzzle": "~6.0"
     },
-    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "salar bahador",
@@ -18,6 +17,20 @@
     "autoload": {
         "psr-4": {
             "SaliBhdr\\TyphoonTelegram\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SaliBhdr\\TyphoonTelegram\\Laravel\\TelegramServiceProvider",
+                "SaliBhdr\\TyphoonTelegram\\Laravel\\RouteServiceProvider"
+            ],
+            "aliases": {
+                "Telegram": "SaliBhdr\\TyphoonTelegram\\Laravel\\Facades\\Telegram"
+            }
         }
     },
     "config": {

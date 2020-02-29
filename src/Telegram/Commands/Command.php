@@ -2,13 +2,14 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Commands;
 
+use Illuminate\Support\Str;
+use SaliBhdr\TyphoonTelegram\Laravel\Facades\Telegram;
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
+use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Message;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
 
 /**
  * Class Command.
- *
- *
  * @method mixed replyWithMessage($use_sendMessage_parameters)       Reply Chat with a message. You can use all the sendMessage() parameters except chat_id.
  * @method mixed replyWithPhoto($use_sendPhoto_parameters)           Reply Chat with a Photo. You can use all the sendPhoto() parameters except chat_id.
  * @method mixed replyWithAudio($use_sendAudio_parameters)           Reply Chat with an Audio message. You can use all the sendAudio() parameters except chat_id.
@@ -22,9 +23,20 @@ use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
 abstract class Command implements CommandInterface
 {
     /**
+     * make this true to not show in the list of help command
+     * @var boolean
+     */
+    protected $hidden = false;
+
+    /**
+     * if true it handles command automatically and skip the config for handle_commands
+     * @var bool
+     */
+    protected $handleAutomatically = true;
+
+    /**
      * The name of the Telegram command.
      * Ex: help - Whenever the user sends /help, this would be resolved.
-     *
      * @var string
      */
     protected $name;
@@ -49,9 +61,16 @@ abstract class Command implements CommandInterface
      */
     protected $update;
 
+    /** @var Message */
+    protected $message;
+
+    public function __construct()
+    {
+        $this->name = fixCommandName($this->name);
+    }
+
     /**
      * Get Command Name.
-     *
      * @return string
      */
     public function getName()
@@ -61,9 +80,7 @@ abstract class Command implements CommandInterface
 
     /**
      * Set Command Name.
-     *
      * @param $name
-     *
      * @return Command
      */
     public function setName($name)
@@ -75,7 +92,6 @@ abstract class Command implements CommandInterface
 
     /**
      * Get Command Description.
-     *
      * @return string
      */
     public function getDescription()
@@ -85,9 +101,7 @@ abstract class Command implements CommandInterface
 
     /**
      * Set Command Description.
-     *
      * @param $description
-     *
      * @return Command
      */
     public function setDescription($description)
@@ -99,7 +113,6 @@ abstract class Command implements CommandInterface
 
     /**
      * Returns Telegram Instance.
-     *
      * @return Api
      */
     public function getTelegram()
@@ -109,7 +122,6 @@ abstract class Command implements CommandInterface
 
     /**
      * Returns Original Update.
-     *
      * @return Update
      */
     public function getUpdate()
@@ -119,7 +131,6 @@ abstract class Command implements CommandInterface
 
     /**
      * Get Arguments passed to the command.
-     *
      * @return string
      */
     public function getArguments()
@@ -128,8 +139,23 @@ abstract class Command implements CommandInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isHandleAutomatically(): bool
+    {
+        return $this->handleAutomatically;
+    }
+
+    /**
      * Returns an instance of Command Bus.
-     *
      * @return CommandBus
      */
     public function getCommandBus()
@@ -145,21 +171,31 @@ abstract class Command implements CommandInterface
         $this->telegram = $telegram;
         $this->arguments = $arguments;
         $this->update = $update;
+        if ($this->update->has('callback_query')) {
+            $this->message = $this->update
+                ->getCallbackQuery()
+                ->getMessage();
+        }
+        else {
+            $this->message = $this->update->getMessage();
+        }
+
+        if (method_exists($this, 'boot'))
+            $this->boot();
 
         return $this->handle($arguments);
     }
 
     /**
      * Helper to Trigger other Commands.
-     *
      * @param      $command
      * @param null $arguments
-     *
      * @return mixed
+     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     protected function triggerCommand($command, $arguments = null)
     {
-        return $this->getCommandBus()->execute($command, $arguments ?: $this->arguments, $this->update);
+        return $this->getCommandBus()->execute($command, $arguments ?: $this->arguments, $this->update, false);
     }
 
     /**
@@ -169,18 +205,16 @@ abstract class Command implements CommandInterface
 
     /**
      * Magic Method to handle all ReplyWith Methods.
-     *
      * @param $method
      * @param $arguments
-     *
      * @return mixed|string
      */
     public function __call($method, $arguments)
     {
         $action = substr($method, 0, 9);
         if ($action === 'replyWith') {
-            $reply_name = studly_case(substr($method, 9));
-            $methodName = 'send'.$reply_name;
+            $reply_name = Str::studly(substr($method, 9));
+            $methodName = 'send' . $reply_name;
 
             if (!method_exists($this->telegram, $methodName)) {
                 return 'Method Not Found';
@@ -192,6 +226,17 @@ abstract class Command implements CommandInterface
             return call_user_func_array([$this->telegram, $methodName], [$params]);
         }
 
-        return 'Method Not Found';
+        return $this->$method(...$arguments);
+    }
+
+    /**
+     * @param iterable $items
+     * @param int      $columns
+     * @param callable $callback
+     * @return array
+     */
+    public function makeDynamicKeyboard(iterable $items, int $columns, callable $callback)
+    {
+        return Telegram::makeDynamicKeyboard($items, $columns, $callback);
     }
 }

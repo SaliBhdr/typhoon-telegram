@@ -3,6 +3,7 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Commands;
 
 use SaliBhdr\TyphoonTelegram\Telegram\Api;
+use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramCommandNotFoundException;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException;
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
 
@@ -11,6 +12,8 @@ use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update;
  */
 class CommandBus
 {
+    protected $isCommandHandled = false;
+
     /**
      * @var Command[] Holds all commands.
      */
@@ -21,11 +24,11 @@ class CommandBus
      */
     private $telegram;
 
+
     /**
      * Instantiate Command Bus.
      *
      * @param Api $telegram
-     *
      */
     public function __construct(Api $telegram)
     {
@@ -35,10 +38,20 @@ class CommandBus
     /**
      * Returns the list of commands.
      *
+     * @param bool $hidden
+     *
      * @return array
      */
-    public function getCommands()
+    public function getCommands(bool $hidden = true)
     {
+        if (!$hidden) {
+            $commands = array_filter($this->commands, function(Command $command) {
+                return !$command->isHidden();
+            });
+
+            return $commands;
+        }
+
         return $this->commands;
     }
 
@@ -48,6 +61,10 @@ class CommandBus
      * @param array $commands
      *
      * @return CommandBus
+     * @throws TelegramCommandNotFoundException
+     * @throws TelegramException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \ReflectionException
      */
     public function addCommands(array $commands)
     {
@@ -64,6 +81,7 @@ class CommandBus
      * @param CommandInterface|string $command Either an object or full path to the command class.
      *
      * @return CommandBus
+     * @throws TelegramCommandNotFoundException
      * @throws TelegramException
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \ReflectionException
@@ -72,7 +90,7 @@ class CommandBus
     {
         if (!is_object($command)) {
             if (!class_exists($command)) {
-                throw new TelegramException(
+                throw new TelegramCommandNotFoundException(
                     sprintf(
                         'Command class "%s" not found! Please make sure the class exists.',
                         $command
@@ -82,7 +100,8 @@ class CommandBus
 
             if ($this->telegram->hasContainer()) {
                 $command = $this->buildDependencyInjectedCommand($command);
-            } else {
+            }
+            else {
                 $command = new $command();
             }
         }
@@ -140,23 +159,29 @@ class CommandBus
     /**
      * Handles Inbound Messages and Executes Appropriate Command.
      *
-     * @param $message
-     * @param $update
-     *
-     * @throws TelegramException
+     * @param        $command_name
+     * @param Update $update
+     * @param bool $fromApi
+     * @param null $arguments
      *
      * @return Update
+     * @throws TelegramException
      */
-    public function handler($message, Update $update)
+    public function handler($command_name, Update $update, bool $fromApi = false, $arguments = null)
     {
-        $match = $this->parseCommand($message);
-        if (!empty($match)) {
-            $command = $match[1];
-            $arguments = $match[3];
-            $this->execute($command, $arguments, $update);
-        }
+        $match = $this->parseCommand($command_name);
 
-        return $update;
+        if(is_array($match))
+            $match = array_filter($match);
+
+        if (!empty($match)) {
+            $arguments = $match[3] ?? $arguments;
+
+            return $this->execute($match[1], $arguments, $update, $fromApi);
+        }
+        else {
+            return $this->execute($command_name, $arguments, $update, $fromApi);
+        }
     }
 
     /**
@@ -165,11 +190,12 @@ class CommandBus
      * @param $text
      *
      * @throws \InvalidArgumentException
-     *
      * @return array
      */
     public function parseCommand($text)
     {
+        $text = fixCommandName($text);
+
         if (trim($text) === '') {
             throw new \InvalidArgumentException('Message is empty, Cannot parse for command');
         }
@@ -182,21 +208,44 @@ class CommandBus
     /**
      * Execute the command.
      *
-     * @param $name
-     * @param $arguments
-     * @param $message
+     * @param      $commandName
+     * @param      $arguments
+     * @param      $message
+     * @param bool $fromApi
      *
      * @return mixed
+     * @throws TelegramException
      */
-    public function execute($name, $arguments, $message)
+    public function execute($commandName, $arguments, $message, bool $fromApi)
     {
-        if (array_key_exists($name, $this->commands)) {
-            return $this->commands[$name]->make($this->telegram, $arguments, $message);
-        } elseif (array_key_exists('help', $this->commands)) {
-            return $this->commands['help']->make($this->telegram, $arguments, $message);
-        }
+        $commandName = fixCommandName($commandName);
 
-        return 'Ok';
+        if (count(explode(' ', $commandName)) > 1)
+            return false;
+
+        if (array_key_exists($commandName, $this->commands)) {
+            /** @var Command $command */
+            $command = $this->commands[$commandName];
+
+            $isRunnable = config('telegram.handle_commands');
+
+            if ($fromApi)
+                $isRunnable = $isRunnable && $command->isHandleAutomatically();
+
+            if ($isRunnable) {
+                $this->isCommandHandled = true;
+
+                return $this->commands[$commandName]->make($this->telegram, $arguments, $message);
+            }
+
+            return false;
+        }
+        else {
+            if (config('telegram.debug'))
+                throw new TelegramException("Command {$commandName} not found!");
+
+            return false;
+        }
     }
 
     /**
@@ -204,7 +253,7 @@ class CommandBus
      *
      * @param $commandClass
      *
-     * @return object
+     * @return \object
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \ReflectionException
      */
@@ -218,7 +267,7 @@ class CommandBus
 
         // get constructor params
         $constructorReflector = new \ReflectionMethod($commandClass, '__construct');
-        $params = $constructorReflector->getParameters();
+        $params               = $constructorReflector->getParameters();
 
         // if no params are needed proceed with normal instantiation
         if (empty($params)) {
@@ -226,7 +275,7 @@ class CommandBus
         }
 
         // otherwise fetch each dependency out of the container
-        $container = $this->telegram->getContainer();
+        $container    = $this->telegram->getContainer();
         $dependencies = [];
         foreach ($params as $param) {
             $dependencies[] = $container->make($param->getClass()->name);
@@ -236,5 +285,13 @@ class CommandBus
         $classReflector = new \ReflectionClass($commandClass);
 
         return $classReflector->newInstanceArgs($dependencies);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCommandHandled() : bool
+    {
+        return $this->isCommandHandled;
     }
 }

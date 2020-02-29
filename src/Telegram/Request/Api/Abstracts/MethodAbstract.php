@@ -8,12 +8,18 @@
 namespace SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use SaliBhdr\TyphoonTelegram\Laravel\Facades\Telegram;
 use SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramParamsRequiredException;
 
+/**
+ * extend from MethodAbstract if the api method doesn't have chat_id
+ *
+ * Class MethodAbstract
+ * @package SaliBhdr\TyphoonTelegram\Telegram\Request\Api\Abstracts
+ */
 abstract class MethodAbstract
 {
-
     protected $chatId;
 
     protected $paramsIsSetManually = false;
@@ -21,7 +27,7 @@ abstract class MethodAbstract
     protected $params = [];
 
     /** @var string|int $botName */
-    protected $botName = 'default';
+    protected $botName;
 
     abstract protected function getRequiredParams() : array;
 
@@ -31,10 +37,10 @@ abstract class MethodAbstract
 
     /**
      * BaseAbstract constructor.
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     public function __construct()
     {
+        $this->botName = config('telegram.default_bot');
         $this->setApiInstance();
     }
 
@@ -108,7 +114,6 @@ abstract class MethodAbstract
      * @param  array $parameters
      *
      * @return mixed
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
     public static function __callStatic($method, $parameters)
     {
@@ -155,4 +160,15 @@ abstract class MethodAbstract
     }
 
     abstract public function method();
+
+    public function reset(...$params)
+    {
+        foreach ($params as $param){
+            $param = Str::camel($param);
+
+            if(property_exists($this,$param)){
+                $this->{$param} = null;
+            }
+        }
+    }
 }
