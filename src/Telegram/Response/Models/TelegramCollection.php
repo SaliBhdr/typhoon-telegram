@@ -5,7 +5,7 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
 /**
  * Class Chat.
  *
- *
+ * @method bool isOk()
  * @method int      getId()        Unique identifier for this chat, not exceeding 1e13 by absolute value.
  * @method string   getType()      Type of chat, can be either 'private', 'group', 'supergroup' or 'channel'.
  * @method string   getTitle()     (Optional). Title, for channels and group chats.

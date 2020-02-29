@@ -17,11 +17,15 @@ trait Parsable
     public function htmlParsMode()
     {
         $this->parsMode = Parse::HTML;
+
+        return $this;
     }
 
     public function markdownParseMode()
     {
         $this->parsMode = Parse::MARKDOWN;
+
+        return $this;
     }
 
 }

@@ -8,7 +8,6 @@
 
 namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
 
-
 use SaliBhdr\TyphoonTelegram\Telegram\Response\Response;
 
 class ModelDecorator

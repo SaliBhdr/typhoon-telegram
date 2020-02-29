@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Http\Controllers\Telegram;
+
+use App\Http\Controllers\Controller;
+use SaliBhdr\TyphoonTelegram\Laravel\Facades\Telegram;
+
+class MainBotController extends Controller
+{
+    /**
+     * handle incoming messages
+     */
+    public function handleRequests()
+    {
+        Telegram::handleBot(true);
+    }
+
+}

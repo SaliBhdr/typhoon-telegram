@@ -8,23 +8,24 @@
 namespace SaliBhdr\TyphoonTelegram\Laravel\Commands;
 
 use Illuminate\Console\Command;
-use SaliBhdr\TyphoonTelegram\Telegram\Api;
+use SaliBhdr\TyphoonTelegram\Laravel\Facades\Telegram;
+use SaliBhdr\TyphoonTelegram\Telegram\Request\Client;
+use SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Message;
+use Symfony\Component\Console\Input\InputOption;
 
-class WebHookCommand extends Command
+class WebhookCommand extends Command
 {
 
     /**
      * The console command name.
-     *
      * @var string
      */
-    protected $name = 'telegram:set-webhooks';
+    protected $name = 'telegram:webhook';
 
     /**    * The console command description.
-     *
      * @var string
      */
-    protected $description = 'set webhooks for your telegram bot';
+    protected $description = 'Set webhooks for your telegram bot';
 
 
     private $bots;
@@ -41,9 +42,7 @@ class WebHookCommand extends Command
     }
 
     /**    * Execute the console command.
-     *
      * @return void
-     *
      * @throws \Exception
      */
     public function handle()
@@ -57,7 +56,7 @@ class WebHookCommand extends Command
         }
 
         $this->emptyLine();
-        $this->line("<info>Setting webhooks:</info>");
+        $this->printStartMessage();
         $this->emptyLine();
 
         $row = 1;
@@ -66,11 +65,13 @@ class WebHookCommand extends Command
 
             if ($this->botIsActive()) {
 
-                $this->tryInitWebHook($row);
+                $this->tryInitWebhook($row);
+                sleep(rand(1,5));
 
-            } else {
+            }
+            else {
 
-                $this->warn(" $row) `{$this->botName}` is deactive");
+                $this->warn(" $row) '{$this->botName}' is not active");
 
                 $this->incrementDeactive();
             }
@@ -79,16 +80,33 @@ class WebHookCommand extends Command
             $row++;
         }
 
-        $this->showCountLine();
+        if (!$this->isPrintModeRequested() && !$this->isInfoRequested())
+            $this->showCountLine();
+    }
+
+    /**
+     * @return bool
+     */
+    private function isPrintModeRequested()
+    {
+        return $this->input->getOption('print');
+    }
+
+    /**
+     * @return bool
+     */
+    private function isInfoRequested()
+    {
+        return $this->input->getOption('info');
     }
 
     private function showCountLine()
     {
-        $this->line(" <info>{$this->activeBotsCount} active</info> and <warning>{$this->deactiveBotsCount} deactive</warning> webhooks");
+        $this->info(" {$this->activeBotsCount} active");
+        $this->warn(" {$this->deactiveBotsCount} not active");
     }
 
     /**
-     *
      * @return string
      */
     private function getUrl()
@@ -96,9 +114,8 @@ class WebHookCommand extends Command
         return rtrim($this->botSetting['baseUrl'] ?? url(), "/");
     }
 
+
     /**
-     * @param $setting
-     *
      * @return bool
      */
     private function botIsActive()
@@ -106,17 +123,15 @@ class WebHookCommand extends Command
         return $this->botSetting['is_active'] ?? false;
     }
 
+
     /**
-     * @param $url
-     * @param $token
-     *
      * @return array|mixed
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
-    private function setWebHook()
+    private function setWebhook()
     {
-        $webHookResponse = Api::init($this->botSetting['botToken'])
-                              ->setWebhook(['url' => "{$this->getUrl()}/{$this->botSetting['botToken']}/webhook"]);
+        /**@var Message $webHookResponse */
+        $webHookResponse = Telegram::token($this->botSetting['botToken'])
+                              ->setWebhook(['url' => $this->webHookUrl()]);
 
         return $webHookResponse->getRawResponse();
     }
@@ -163,57 +178,100 @@ class WebHookCommand extends Command
 
     /**
      * @param $row
-     * @param $botName
      * @param $msg
      */
     private function webhookError($row, $msg)
     {
-        $this->line(" $row) `{$this->botName}` webhook response: <error>" . $msg . "</error>");
+        $this->line(" $row) '{$this->botName}' webhook error: <error>" . $msg . "</error>");
 
     }
 
     /**
      * @param $row
-     * @param $botName
      */
     private function webhookSuccess($row)
     {
-        $this->line(" $row) `{$this->botName}` webhook response: <info>Webhook set</info>");
+        $this->line(" $row) '{$this->botName}' webhook response: <info>Webhook set</info>");
+    }
+
+
+    /**
+     * @param $row
+     *
+     */
+    private function initWebhook($row)
+    {
+        if ($this->isInfoRequested()) {
+            $this->info($row . ') `' . $this->botName . '`:' . Client::BASE_BOT_URL . $this->botSetting['botToken'] . '/getWebhookInfo');
+
+        }
+        elseif ($this->isPrintModeRequested()) {
+            $this->info($row . ') `' . $this->botName . '`:' . Client::BASE_BOT_URL . $this->botSetting['botToken'] . '/setWebhook?url=' . $this->webHookUrl());
+        }
+        else {
+            $webHookResponse = $this->setWebhook();
+
+            if (isset($webHookResponse[0]) && $webHookResponse[0] === true) {
+                $this->webhookSuccess($row);
+
+                $this->incrementActive();
+            }
+            else {
+                $this->webhookError($row, 'Webhook Not Set');
+                $this->incrementDeactive();
+            }
+        }
+
+    }
+
+    /**
+     * @return string
+     */
+    private function webHookUrl()
+    {
+        return "{$this->getUrl()}/{$this->botSetting['botToken']}/webhook";
     }
 
     /**
      * @param $row
-     * @param $botName
-     * @param $setting
-     *
-     * @throws \SaliBhdr\TyphoonTelegram\Telegram\Exceptions\TelegramException
      */
-    private function initWebHook($row)
-    {
-
-        $webHookResponse = $this->setWebHook();
-
-        if (isset($webHookResponse[0]) && $webHookResponse[0] === true) {
-            $this->webhookSuccess($row);
-
-            $this->incrementActive();
-        } else {
-            $this->webhookError($row, 'Webhook Not Set');
-            $this->incrementDeactive();
-        }
-    }
-
-    private function tryInitWebHook($row)
+    private function tryInitWebhook($row)
     {
         try {
-
-            $this->initWebHook($row);
+            $this->initWebhook($row);
         }
         catch (\Exception $e) {
 
             $this->webhookError($row, $e->getMessage());
 
             $this->incrementDeactive();
+        }
+    }
+
+    /**
+     * Get the console command options.
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            new InputOption('--print', null, InputOption::VALUE_NONE, 'Just printing webhooks without setting them'),
+            new InputOption('--info', null, InputOption::VALUE_NONE, 'Generates urls to get info about webhook'),
+        ];
+    }
+
+    private function printStartMessage() : void
+    {
+        if ($this->isInfoRequested()) {
+            $this->info(" Open these links in your browser to get info about your bots webhooks ");
+            $this->line(" Webhook info urls are: ");
+        }
+        elseif ($this->isPrintModeRequested()) {
+            $this->info(" Open these links in your browser to set webhooks to your bot ");
+            $this->info(" Webhook urls are: ");
+        }
+        else {
+            $this->info(" Setting webhooks: ");
         }
     }
 }

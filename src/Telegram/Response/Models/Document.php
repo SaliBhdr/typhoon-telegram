@@ -5,7 +5,8 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
 /**
  * Class Document.
  *
- *
+ * @method bool isOk()
+
  * @method string       getFileId()     Unique file identifier.
  * @method PhotoSize    getThumb()      (Optional). Document thumbnail as defined by sender.
  * @method string       getFileName()   (Optional). Original filename as defined by sender.
@@ -22,5 +23,17 @@ class Document extends BaseModel
         return [
             'thumb' => PhotoSize::class,
         ];
+    }
+
+    /**
+     * checks if mime type matches
+     *
+     * @param string $mimeType
+     *
+     * @return bool
+     */
+    public function mimeTypeIs($mimeType)
+    {
+        return $this->getMimeType() == $mimeType;
     }
 }

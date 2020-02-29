@@ -1,0 +1,28 @@
+<?php
+namespace App\Telegram\Handlers;
+
+use SaliBhdr\TyphoonTelegram\Telegram\BaseTelegramFlowHandler;
+
+/**
+ * This class handle method is called before the bot goes into the flow of other classes
+ *
+ * Class BootHandler
+ * @package App\Telegram\Handlers
+ */
+class BootHandler extends BaseTelegramFlowHandler{
+
+    public function boot()
+    {
+        //Todo:: add your property construction here
+    }
+
+    /**
+     * Here you have access to $this->update property that holds an Update object (telegram response to you)
+     * @see \SaliBhdr\TyphoonTelegram\Telegram\Response\Models\Update
+     *
+     */
+    public function handle()
+    {
+        //Todo:: handle you requests here
+    }
+}

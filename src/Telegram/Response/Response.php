@@ -56,6 +56,7 @@ class Response extends JsonResponse
     public function __construct(?TelegramRequest $request, $response)
     {
         if ($response instanceof ResponseInterface || $response instanceof CustomResponse) {
+
             $this->httpStatusCode = $response->getStatusCode();
             $this->body = $response->getBody();
             $this->headers = $response->getHeaders();
@@ -72,7 +73,7 @@ class Response extends JsonResponse
         if (isset($request))
             $this->endPoint = (string) $request->getEndpoint();
 
-        parent::__construct($this->getDecodedBody(), $response->getStatusCode(), $response->getHeaders());
+        parent::__construct($this->getDecodedBody(), $this->httpStatusCode ?? 503, $this->headers ?? []);
     }
 
     /**

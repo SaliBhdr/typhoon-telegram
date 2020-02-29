@@ -5,7 +5,8 @@ namespace SaliBhdr\TyphoonTelegram\Telegram\Response\Models;
 /**
  * Class Video.
  *
- *
+ * @method bool isOk()
+
  * @method string       getFileId()     Unique identifier for this file.
  * @method int          getWidth()      Video width as defined by sender.
  * @method int          getHeight()     Video height as defined by sender.
